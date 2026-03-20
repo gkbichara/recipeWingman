@@ -15,13 +15,13 @@ class VectorStore:
         )
 
 
-
     def query(self, query_embedding, n_results=5):
         results = self.collection.query(
                 query_embeddings=query_embedding,
                 n_results=n_results
                 )
         return results
+
 
     def count(self):
         return self.collection.count()
