@@ -45,6 +45,7 @@ huggingface_hub==1.7.1
 idna==3.11
 importlib_metadata==8.7.1
 importlib_resources==6.5.2
+iniconfig==2.3.0
 ipykernel==7.2.0
 ipython==9.10.0
 ipython_pygments_lexers==1.1.1
@@ -107,6 +108,7 @@ parso==0.8.6
 pexpect==4.9.0
 pillow==12.1.1
 platformdirs==4.9.4
+pluggy==1.6.0
 prometheus_client==0.24.1
 prompt_toolkit==3.0.52
 protobuf==6.33.5
@@ -122,6 +124,7 @@ Pygments==2.19.2
 pyparsing==3.3.2
 PyPika==0.51.1
 pyproject_hooks==1.2.0
+pytest==9.0.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 python-json-logger==4.0.0
