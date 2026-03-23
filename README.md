@@ -142,6 +142,7 @@ recipewingman/
 ├── backend/                      # FastAPI server
 │   ├── main.py                   # App entry point & routes
 │   ├── config.py                 # Provider config & env vars
+│   ├── embedder.py               # Shared embedding utility (OpenAI text-embedding-3-small)
 │   │
 │   ├── stt/                      # Speech-to-Text modules
 │   │   ├── base.py               # Abstract STT interface
@@ -152,7 +153,7 @@ recipewingman/
 │   ├── rag/                      # RAG pipeline
 │   │   ├── ingest.py             # Chunk, embed, store recipes
 │   │   ├── retriever.py          # Query vector DB, return top-k
-│   │   └── vector_store.py       # ChromaDB / FAISS wrapper
+│   │   └── vector_store.py       # ChromaDB wrapper
 │   │
 │   ├── llm/                      # LLM modules
 │   │   ├── base.py               # Abstract LLM interface
@@ -166,7 +167,7 @@ recipewingman/
 │   │   └── google_tts.py         # Google TTS
 │   │
 │   └── agent/
-│       ├── pipeline.py           # Orchestrates STT→RAG→LLM→TTS
+│       ├── pipeline.py           # Orchestrates STT→Embed→RAG→LLM→TTS
 │       ├── conversation.py       # Multi-turn history manager
 │       └── modifier.py           # Recipe modification tool
 │
