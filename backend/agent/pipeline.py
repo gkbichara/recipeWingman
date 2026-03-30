@@ -1,0 +1,48 @@
+from backend.embedder import get_embeddings
+from backend.rag.retriever import retrieve
+from backend.llm.gpt4o import chat
+from backend.config import OPENAI_API_KEY
+from openai import OpenAI
+
+client = OpenAI(api_key=OPENAI_API_KEY)
+
+system_prompt = """
+You are RecipeWingman, a hands-free cooking assistant
+You will be given recipe chunks retrieved from a database. You have use them as your source of truth for ingredients, steps, and quantities
+Help the user adapt recipes: scale for different servings, suggest substitutions for dietary needs or missing ingredients, adjust techniques for different equipment
+Keep answers concise and practical since the user is mid-cook with messy hands
+If the retrieved recipes don't answer the question, say so honestly, don't invent recipes. 
+Ask more questions in order to understand what they want exactly, and if they are willing to compromise a bit
+"""
+
+def run(user_input, conversation_history):
+    vector = get_embeddings([user_input], client)[0]
+    chunks = retrieve(vector)
+    context_parts = []
+    for chunk in chunks:
+        header = f"--- Recipe: {chunk['recipe_name']} ---"
+        context_parts.append(header + "\n" + chunk["text"])
+    context = "\n\n".join(context_parts)
+
+    messages = []
+    message1 = {"role": "system", "content": system_prompt}
+    message2 = {"role": "system", "content": "Retrieved recipes:\n" + context}
+    message3 = {"role": "user", "content": user_input}
+    
+    messages = [message1, message2] + conversation_history + [message3]
+
+    response = chat(messages)
+
+    conversation_history.append({"role": "user", "content": user_input})
+    conversation_history.append({"role": "assistant", "content": response})
+    
+    return response
+
+if __name__ == "__main__":
+    conversation_history = []
+    while True:
+        user_input = input("\nYou: ")
+        if user_input.lower() in ("quit", "exit"):
+            break
+        response = run(user_input, conversation_history)
+        print(f"\nWingman: {response}")
