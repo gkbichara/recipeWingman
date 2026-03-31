@@ -24,9 +24,6 @@ def retrieve(query_embedding, n_results=TOP_K):
 
 if __name__ == "__main__":
     from backend.embedder import get_embeddings
-    from backend.config import OPENAI_API_KEY
-    from openai import OpenAI
     
-    client = OpenAI(api_key=OPENAI_API_KEY)
-    vector = get_embeddings(["quick pasta with garlic"], client)[0]
+    vector = get_embeddings(["quick pasta with garlic"])[0]
     print( retrieve(vector) )

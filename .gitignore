@@ -11,6 +11,11 @@ venv/
 data/raw/
 data/vector_db/
 
+# Test artifacts
+.aiff
+*.wav
+*.mp3 
+
 # Notebooks
 .ipynb_checkpoints/
 
