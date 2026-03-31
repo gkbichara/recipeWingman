@@ -5,6 +5,7 @@ import uuid
 from backend.agent.pipeline import run
 from backend.stt.whisper import transcribe
 from backend.tts.openai_tts import synthesize
+import time
 
 
 app = FastAPI()
@@ -34,7 +35,9 @@ def chat(request: ChatRequest):
         session_id = str(uuid.uuid4())
 
     history = sessions.get(session_id, [])
-    response = run(request.message, history)
+    result = run(request.message, history)
+    response = result["response"]
+    print(f"[TIMING] {result['timings']}") 
     sessions[session_id] = history
     return ChatResponse(response=response, session_id=session_id)
 
@@ -45,9 +48,21 @@ def voice(audio: UploadFile, session_id: str | None = None):
             session_id = str(uuid.uuid4())
 
         history = sessions.get(session_id, [])
+        start = time.time()
         text = transcribe(audio.file, audio.filename)
-        response = run(text, history)
+        stt_ms = round((time.time() - start) * 1000)
+        result = run(text, history)
+        response = result["response"]
+        timings = result["timings"]
+        start = time.time()
         audio_bytes = synthesize(response)
+        tts_ms = round((time.time() - start) * 1000)
+
+        timings["stt_ms"] = stt_ms
+        timings["tts_ms"] = tts_ms
+        print(f"[TIMING] {timings}")
+
+
         sessions[session_id] = history
         return Response(
             content=audio_bytes,

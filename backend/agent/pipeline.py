@@ -1,6 +1,7 @@
 from backend.embedder import get_embeddings
 from backend.rag.retriever import retrieve
 from backend.llm.gpt4o import chat
+import time
 
 
 system_prompt = """
@@ -25,13 +26,23 @@ def rewrite_query(user_input, conversation_history):
 
 def run(user_input, conversation_history):
     try:
+        rewrite_ms = 0
         if conversation_history:
+            start = time.time()
             search_query = rewrite_query(user_input, conversation_history)
+            rewrite_ms = round((time.time() - start) * 1000)
         else:
             search_query = user_input
 
+        start = time.time()
         vector = get_embeddings([search_query])[0]
+        embedding_ms = round((time.time() - start) * 1000)
+
+
+        start = time.time()
         chunks = retrieve(vector)
+        retrieval_ms = round((time.time() - start) * 1000)
+
         context_parts = []
         for chunk in chunks:
             header = f"--- Recipe: {chunk['recipe_name']} ---"
@@ -45,14 +56,24 @@ def run(user_input, conversation_history):
         conversation_history[:] = conversation_history[-20:]
         messages = [message1, message2] + conversation_history + [message3]
 
+        start = time.time()
         response = chat(messages)
+        llm_ms = round((time.time() - start) * 1000)
+
 
         conversation_history.append({"role": "user", "content": user_input})
         conversation_history.append({"role": "assistant", "content": response})
+
+        timings = {
+            "rewrite_ms": rewrite_ms,
+            "embedding_ms": embedding_ms,
+            "retrieval_ms": retrieval_ms,
+            "llm_ms": llm_ms,
+        }
         
-        return response
+        return {"response": response, "timings": timings}
     except Exception:
-        return "Sorry, something went wrong. Please try again."
+        return {"response": "Sorry, something went wrong. Please try again.", "timings": {}}
 
 if __name__ == "__main__":
     conversation_history = []
@@ -61,5 +82,6 @@ if __name__ == "__main__":
 
         if user_input.lower() in ("quit", "exit"):
             break
-        response = run(user_input, conversation_history)
-        print(f"\nWingman: {response}")
+        result = run(user_input, conversation_history)
+        print(f"\nWingman: {result['response']}")
+        print(f"[TIMING] {result['timings']}")
