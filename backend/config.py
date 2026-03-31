@@ -14,5 +14,9 @@ DATA_PATH = os.path.abspath(os.path.join("data", "processed", "recipes_dev.jsonl
 
 # API keys
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    raise RuntimeError("OPENAI_API_KEY is not set. Add it to your .env file.")
+
+LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o")
 
 client = OpenAI(api_key=OPENAI_API_KEY)

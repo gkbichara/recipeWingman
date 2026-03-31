@@ -1,10 +1,8 @@
-from backend.config import client
+from backend.config import client, LLM_MODEL
 
 def chat(messages):
-
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=LLM_MODEL,
         messages=messages
     )
-
     return response.choices[0].message.content
