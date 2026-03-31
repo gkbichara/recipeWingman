@@ -27,31 +27,35 @@ def rewrite_query(user_input, conversation_history):
 
 
 def run(user_input, conversation_history):
-    if conversation_history:
-        search_query = rewrite_query(user_input, conversation_history)
-    else:
-        search_query = user_input
+    try:
+        if conversation_history:
+            search_query = rewrite_query(user_input, conversation_history)
+        else:
+            search_query = user_input
 
-    vector = get_embeddings([search_query], client)[0]
-    chunks = retrieve(vector)
-    context_parts = []
-    for chunk in chunks:
-        header = f"--- Recipe: {chunk['recipe_name']} ---"
-        context_parts.append(header + "\n" + chunk["text"])
-    context = "\n\n".join(context_parts)
+        vector = get_embeddings([search_query], client)[0]
+        chunks = retrieve(vector)
+        context_parts = []
+        for chunk in chunks:
+            header = f"--- Recipe: {chunk['recipe_name']} ---"
+            context_parts.append(header + "\n" + chunk["text"])
+        context = "\n\n".join(context_parts)
 
-    message1 = {"role": "system", "content": system_prompt}
-    message2 = {"role": "system", "content": "Retrieved recipes:\n" + context}
-    message3 = {"role": "user", "content": user_input}
-    
-    messages = [message1, message2] + conversation_history + [message3]
+        message1 = {"role": "system", "content": system_prompt}
+        message2 = {"role": "system", "content": "Retrieved recipes:\n" + context}
+        message3 = {"role": "user", "content": user_input}
+        
+        conversation_history[:] = conversation_history[-20:]
+        messages = [message1, message2] + conversation_history + [message3]
 
-    response = chat(messages)
+        response = chat(messages)
 
-    conversation_history.append({"role": "user", "content": user_input})
-    conversation_history.append({"role": "assistant", "content": response})
-    
-    return response
+        conversation_history.append({"role": "user", "content": user_input})
+        conversation_history.append({"role": "assistant", "content": response})
+        
+        return response
+    except Exception:
+        return "Sorry, something went wrong. Please try again."
 
 if __name__ == "__main__":
     conversation_history = []

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import uuid
 from backend.agent.pipeline import run
 
@@ -16,7 +16,7 @@ app.add_middleware(CORSMiddleware,
 sessions = {}
 
 class ChatRequest(BaseModel):
-    message: str
+    message: str = Field(max_length=2000)
     session_id: str | None = None
 
 class ChatResponse(BaseModel):
@@ -29,7 +29,7 @@ def chat(request: ChatRequest):
         session_id = request.session_id
     else:
         session_id = str(uuid.uuid4())
-        
+
     history = sessions.get(session_id, [])
     response = run(request.message, history)
     sessions[session_id] = history
