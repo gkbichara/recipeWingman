@@ -1,4 +1,6 @@
-def get_embeddings(texts, client):
+from backend.config import client
+
+def get_embeddings(texts):
     
     response = client.embeddings.create(
         input=texts,

@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import os
+from openai import OpenAI
 
 load_dotenv()  
 
@@ -13,3 +14,5 @@ DATA_PATH = os.path.abspath(os.path.join("data", "processed", "recipes_dev.jsonl
 
 # API keys
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=OPENAI_API_KEY)

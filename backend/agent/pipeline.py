@@ -1,10 +1,7 @@
 from backend.embedder import get_embeddings
 from backend.rag.retriever import retrieve
 from backend.llm.gpt4o import chat
-from backend.config import OPENAI_API_KEY
-from openai import OpenAI
 
-client = OpenAI(api_key=OPENAI_API_KEY)
 
 system_prompt = """
 You are RecipeWingman, a hands-free cooking assistant
@@ -33,7 +30,7 @@ def run(user_input, conversation_history):
         else:
             search_query = user_input
 
-        vector = get_embeddings([search_query], client)[0]
+        vector = get_embeddings([search_query])[0]
         chunks = retrieve(vector)
         context_parts = []
         for chunk in chunks:
