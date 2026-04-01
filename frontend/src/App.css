@@ -1,0 +1,88 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.app-logo {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--accent-saffron);
+  color: var(--bg-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.app-title em {
+  color: var(--accent-saffron);
+  font-style: normal;
+}
+
+.app-error {
+  padding: 0.5rem 1rem;
+  background: rgba(196, 92, 56, 0.15);
+  border: 1px solid var(--accent-terracotta);
+  border-radius: var(--radius-md);
+  color: var(--accent-terracotta);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.app-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.app-text-input {
+  flex: 1;
+  resize: none;
+  min-height: 40px;
+  max-height: 120px;
+  line-height: 1.4;
+}
+
+.app-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--accent-saffron);
+  color: var(--bg-base);
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--transition);
+  flex-shrink: 0;
+}
+
+.app-send-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
