@@ -1,4 +1,4 @@
-# 🍳 RecipeWingman
+# RecipeWingman
 
 > A multimodal, RAG-powered voice cooking assistant that benchmarks STT, LLM, and TTS providers for real-time kitchen use.
 
@@ -12,14 +12,14 @@
 - [Overview](#overview)
 - [Research Questions](#research-questions)
 - [Architecture](#architecture)
-- [Benchmarking Methodology](#benchmarking-methodology)
 - [Repo Structure](#repo-structure)
 - [Setup & Installation](#setup--installation)
 - [Running the App](#running-the-app)
-- [Running the Benchmarks](#running-the-benchmarks)
+- [Benchmarking](#benchmarking)
 - [Dataset](#dataset)
 - [Tech Stack](#tech-stack)
 - [Milestones](#milestones)
+- [Roadmap](#roadmap)
 - [Team](#team)
 
 ---
@@ -34,7 +34,7 @@ Cooking requires constant recipe reference, yet consulting recipes mid-cook is f
 - **Conversational LLM** — multi-turn context so you can ask follow-ups
 - **Voice output** — TTS speaks the answer back to you
 
-Beyond building the system, this project takes a **research approach**: we benchmark each pipeline component (STT, LLM, TTS) across multiple providers using a component isolation methodology to find the optimal combination for real-time cooking assistance.
+Beyond building the system, this project takes a **research approach**: we benchmark pipeline components (STT, LLM, TTS) using a component isolation methodology to identify bottlenecks and find the optimal combination for real-time cooking assistance.
 
 ---
 
@@ -51,70 +51,54 @@ Beyond building the system, this project takes a **research approach**: we bench
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                     RecipeWingman                        │
-│                                                          │
-│  Voice/Text Input                                        │
-│       │                                                  │
-│       ▼                                                  │
-│  ┌─────────┐    ┌──────────────┐    ┌─────────────────┐ │
-│  │   STT   │───▶│ RAG Retrieval│───▶│       LLM       │ │
-│  │         │    │              │    │                  │ │
-│  │ Whisper │    │ ChromaDB /   │    │ GPT-4o /        │ │
-│  │ Google  │    │ FAISS        │    │ Gemini /        │ │
-│  │ Deepgram│    │              │    │ Llama 3 (Groq)  │ │
-│  └─────────┘    └──────────────┘    └────────┬────────┘ │
-│                                              │           │
-│                                              ▼           │
-│                                       ┌─────────┐        │
-│                                       │   TTS   │        │
-│                                       │         │        │
-│                                       │ElevenLab│        │
-│                                       │Google   │        │
-│                                       └────┬────┘        │
-│                                            │             │
-│                                            ▼             │
-│                                     Audio/Text Response  │
-└─────────────────────────────────────────────────────────┘
+Voice/Text Input
+      │
+      ▼
+┌───────────┐    ┌────────────────┐    ┌───────────┐
+│    STT    │───▶│  Query Rewrite │───▶│  Embedder │
+│  Whisper  │    │   (GPT-4o)     │    │ (OpenAI)  │
+└───────────┘    └────────────────┘    └─────┬─────┘
+                                             │
+                                             ▼
+                                    ┌────────────────┐
+                                    │  RAG Retrieval  │
+                                    │   (ChromaDB)    │
+                                    └───────┬────────┘
+                                            │
+                                            ▼
+                                    ┌────────────────┐
+                                    │      LLM       │
+                                    │    (GPT-4o)     │
+                                    └───────┬────────┘
+                                            │
+                                            ▼
+                                    ┌────────────────┐
+                                    │      TTS       │
+                                    │  (OpenAI TTS-1) │
+                                    └───────┬────────┘
+                                            │
+                                            ▼
+                                   Audio/Text Response
 ```
 
 ### Components
 
 | Layer | Description |
 |-------|-------------|
-| **Frontend** | React web app with voice button, chat window, recipe viewer |
-| **Backend** | FastAPI (Python) — handles STT, RAG, LLM, TTS orchestration |
-| **STT** | Converts user speech to text (benchmarked across 3 providers) |
-| **RAG** | Chunks + embeds recipes → vector DB → retrieves top-k passages |
-| **LLM** | Generates grounded, multi-turn conversational responses |
-| **TTS** | Converts LLM text response back to spoken audio |
+| **Frontend** | React web app — text chat and voice toggle with audio playback |
+| **Backend** | FastAPI (Python) — orchestrates the full pipeline |
+| **STT** | OpenAI Whisper — converts speech to text |
+| **Embedder** | OpenAI `text-embedding-3-small` — shared by ingest and query paths |
+| **RAG** | ChromaDB vector store — 10,105 recipe chunks, top-k retrieval |
+| **LLM** | GPT-4o — multi-turn conversational responses with query rewriting |
+| **TTS** | OpenAI TTS-1 — converts response text to spoken audio |
 
----
+### API Endpoints
 
-## Benchmarking Methodology
-
-We use **component isolation**: when testing one component, all others are fixed at a consistent baseline. This eliminates confounding variables.
-
-### STT Benchmark
-- **Providers:** OpenAI Whisper · Google Speech-to-Text · Deepgram
-- **Fixed:** LLM = GPT-4o, TTS = Google TTS
-- **Test set:** 50–100 cooking-domain voice queries, recorded with background kitchen noise
-- **Metrics:** Word Error Rate (WER), transcription latency
-
-### LLM Benchmark
-- **Models:** GPT-4o · Gemini Flash/Pro · Llama 3 (via Groq)
-- **Fixed:** STT = best from above, TTS = Google TTS
-- **Test set:** 30–50 ground-truth recipe Q&A pairs
-- **Metrics:** Answer accuracy, ROUGE-L, response latency
-
-### TTS Benchmark
-- **Providers:** ElevenLabs · Google TTS
-- **Fixed:** STT + LLM = best from above
-- **Metrics:** Synthesis latency
-
-### Full Pipeline
-- **Config:** Best component from each benchmark assembled end-to-end
-- **Metrics:** Total Silence-to-Speech latency, overall answer accuracy
+| Endpoint | Method | Request | Response |
+|----------|--------|---------|----------|
+| `/api/chat` | POST | `{ message, session_id? }` | `{ response, session_id }` |
+| `/api/voice` | POST | FormData `{ audio, session_id? }` | `{ transcript, response, audio_b64, session_id }` |
 
 ---
 
@@ -122,78 +106,65 @@ We use **component isolation**: when testing one component, all others are fixed
 
 ```
 recipewingman/
-│
 ├── README.md
 ├── .env.example                  # API key template
 ├── .gitignore
+├── .python-version               # 3.11.9
 ├── requirements.txt              # Python dependencies
+├── requirements-lock.txt         # Pinned transitive dependencies
 │
 ├── frontend/                     # React web app
 │   ├── public/
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── ChatWindow.jsx    # Conversation display
-│   │   │   ├── VoiceButton.jsx   # Record & send voice input
-│   │   │   └── RecipeViewer.jsx  # Active recipe display
-│   │   ├── App.jsx
-│   │   └── index.js
+│   │   ├── api.js                # Backend API client
+│   │   ├── App.jsx               # Main app layout
+│   │   ├── index.js
+│   │   ├── index.css             # Design tokens (warm kitchen palette)
+│   │   └── components/
+│   │       ├── ChatWindow.jsx    # Conversation display
+│   │       └── VoiceButton.jsx   # Record & send voice input
 │   └── package.json
 │
 ├── backend/                      # FastAPI server
-│   ├── main.py                   # App entry point & routes
-│   ├── config.py                 # Provider config & env vars
-│   ├── embedder.py               # Shared embedding utility (OpenAI text-embedding-3-small)
+│   ├── main.py                   # App entry point & API routes
+│   ├── config.py                 # OpenAI client, env var loading, startup validation
+│   ├── embedder.py               # Shared get_embeddings() — OpenAI text-embedding-3-small
 │   │
-│   ├── stt/                      # Speech-to-Text modules
-│   │   ├── base.py               # Abstract STT interface
-│   │   ├── whisper_stt.py        # OpenAI Whisper
-│   │   ├── google_stt.py         # Google Speech-to-Text
-│   │   └── deepgram_stt.py       # Deepgram
+│   ├── stt/
+│   │   └── whisper.py            # OpenAI Whisper transcription
 │   │
-│   ├── rag/                      # RAG pipeline
-│   │   ├── ingest.py             # Chunk, embed, store recipes
-│   │   ├── retriever.py          # Query vector DB, return top-k
-│   │   └── vector_store.py       # ChromaDB wrapper
+│   ├── rag/
+│   │   ├── vector_store.py       # ChromaDB PersistentClient wrapper
+│   │   ├── ingest.py             # Chunking (tiktoken), batch embed + store
+│   │   └── retriever.py          # Takes pre-computed embedding, returns top-k chunks
 │   │
-│   ├── llm/                      # LLM modules
-│   │   ├── base.py               # Abstract LLM interface
-│   │   ├── gpt4o.py              # OpenAI GPT-4o
-│   │   ├── gemini.py             # Google Gemini
-│   │   └── llama_groq.py         # Llama 3 via Groq
+│   ├── llm/
+│   │   └── gpt4o.py              # OpenAI chat wrapper (model configurable via LLM_MODEL)
 │   │
-│   ├── tts/                      # Text-to-Speech modules
-│   │   ├── base.py               # Abstract TTS interface
-│   │   ├── elevenlabs_tts.py     # ElevenLabs
-│   │   └── google_tts.py         # Google TTS
+│   ├── tts/
+│   │   └── openai_tts.py         # OpenAI TTS-1 synthesis
 │   │
 │   └── agent/
-│       ├── pipeline.py           # Orchestrates STT→Embed→RAG→LLM→TTS
-│       ├── conversation.py       # Multi-turn history manager
-│       └── modifier.py           # Recipe modification tool
+│       └── pipeline.py           # Orchestrator: rewrite → embed → retrieve → LLM
 │
-├── benchmarks/                   # Benchmarking scripts
-│   ├── run_stt_benchmark.py
-│   ├── run_llm_benchmark.py
-│   ├── run_tts_benchmark.py
-│   ├── run_full_pipeline.py
-│   └── results/                  # Output CSVs and charts
+├── tests/
+│   └── rag/
+│       └── test_ingest.py        # 4 pytest tests for chunk_text
+│
+├── benchmarks/
+│   └── results/                  # Timing CSVs from manual benchmark runs
 │
 ├── data/
 │   ├── raw/                      # Downloaded datasets (gitignored)
-│   ├── processed/                # Chunked & cleaned recipes
+│   ├── processed/
+│   │   └── recipes_dev.jsonl     # 10,000-recipe dev subset (committed)
 │   ├── test_sets/
-│   │   ├── qa_test_set.json      # 30–50 ground-truth Q&A pairs
-│   │   └── stt_test_set/         # Voice query recordings + transcripts
-│   └── vector_db/                # Persisted ChromaDB (gitignored)
+│   └── vector_db/                # Persisted ChromaDB — 10,105 chunks (gitignored)
 │
 ├── notebooks/
-│   ├── EDA.ipynb                 # Food.com exploratory data analysis
-│   └── benchmark_analysis.ipynb  # Results analysis & plots
+│   └── EDA.ipynb                 # Food.com exploratory data analysis
 │
-└── reports/                      # Milestone PDFs
-    ├── milestone1.pdf
-    ├── milestone2.pdf
-    └── milestone3.pdf
+└── reports/                      # Milestone reports
 ```
 
 ---
@@ -201,28 +172,21 @@ recipewingman/
 ## Setup & Installation
 
 ### Prerequisites
-- Python 3.10+
+- Python 3.11.9 (via pyenv)
 - Node.js 18+
 - Git
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/YOUR_USERNAME/recipewingman.git
-cd recipewingman
+git clone https://github.com/gkbichara/recipeWingman.git
+cd recipeWingman
 ```
 
 ### 2. Set up environment variables
 ```bash
 cp .env.example .env
 ```
-Fill in your API keys in `.env`:
-```
-OPENAI_API_KEY=
-GOOGLE_API_KEY=
-DEEPGRAM_API_KEY=
-ELEVENLABS_API_KEY=
-GROQ_API_KEY=
-```
+Fill in your `OPENAI_API_KEY` in `.env`. This is the only key required for the current single-provider pipeline.
 
 ### 3. Install Python dependencies
 ```bash
@@ -238,9 +202,9 @@ cd ..
 
 ### 5. Ingest the recipe dataset
 ```bash
-python backend/rag/ingest.py --source data/processed/
+python -m backend.rag.ingest
 ```
-This will chunk, embed, and store all recipes into the vector database.
+This chunks, embeds, and stores all recipes from `data/processed/recipes_dev.jsonl` into the vector database. The vector DB persists to `data/vector_db/` — you only need to run this once.
 
 ---
 
@@ -251,7 +215,7 @@ This will chunk, embed, and store all recipes into the vector database.
 uvicorn backend.main:app --reload --port 8000
 ```
 
-### Start the frontend
+### Start the frontend (separate terminal)
 ```bash
 cd frontend
 npm start
@@ -259,33 +223,20 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Selecting providers
-You can switch STT/LLM/TTS providers via `backend/config.py` or by passing query params:
-```
-GET /api/config?stt=whisper&llm=gpt4o&tts=google
-```
+The LLM model is configurable via the `LLM_MODEL` environment variable (defaults to `gpt-4o`).
 
 ---
 
-## Running the Benchmarks
+## Benchmarking
 
-Each benchmark script outputs results to `benchmarks/results/`.
+Benchmarking is currently done manually using the per-component timing instrumentation built into the pipeline. Every request logs `[TIMING]` data to the server console, broken down by component (rewrite, embedding, retrieval, LLM, and STT/TTS for voice).
 
+Results are stored as CSVs in `benchmarks/results/`.
+
+### Running tests
 ```bash
-# STT benchmark (Whisper vs Google vs Deepgram)
-python benchmarks/run_stt_benchmark.py
-
-# LLM benchmark (GPT-4o vs Gemini vs Llama 3)
-python benchmarks/run_llm_benchmark.py
-
-# TTS benchmark (ElevenLabs vs Google TTS)
-python benchmarks/run_tts_benchmark.py
-
-# Full end-to-end pipeline with best components
-python benchmarks/run_full_pipeline.py
+pytest tests/
 ```
-
-Results are saved as CSVs in `benchmarks/results/` and can be analyzed in `notebooks/benchmark_analysis.ipynb`.
 
 ---
 
@@ -294,12 +245,10 @@ Results are saved as CSVs in `benchmarks/results/` and can be analyzed in `noteb
 | Source | Size | Use |
 |--------|------|-----|
 | [Food.com (Kaggle)](https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions) | ~230,000 recipes | Primary RAG corpus |
-| NYT Cooking (curated) | ~100 recipes | Quality benchmark corpus |
-| User-uploaded PDFs | Runtime | Personalization |
-| Custom Q&A Test Set | 30–50 pairs | LLM accuracy evaluation |
-| STT Test Set | 50–100 recordings | WER evaluation |
 
-> **Note:** Raw dataset files are gitignored. Download Food.com from Kaggle and place in `data/raw/`.
+We use a 10,000-recipe dev subset (`data/processed/recipes_dev.jsonl`) selected during EDA for token count distribution and coverage. This produces 10,105 chunks in the vector database.
+
+> **Note:** Raw dataset files are gitignored. The processed dev subset is committed.
 
 ---
 
@@ -307,13 +256,14 @@ Results are saved as CSVs in `benchmarks/results/` and can be analyzed in `noteb
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React |
-| Backend | FastAPI (Python) |
-| Vector DB | ChromaDB / FAISS |
-| Embeddings | OpenAI `text-embedding-3-small` |
-| STT | Whisper · Google STT · Deepgram |
-| LLM | GPT-4o · Gemini Flash/Pro · Llama 3 (Groq) |
-| TTS | ElevenLabs · Google TTS |
+| Frontend | React 18 |
+| Backend | FastAPI (Python 3.11.9) |
+| Vector DB | ChromaDB (PersistentClient) |
+| Embeddings | OpenAI `text-embedding-3-small` (1536 dims) |
+| Tokenizer | tiktoken (`cl100k_base`) |
+| STT | OpenAI Whisper |
+| LLM | OpenAI GPT-4o (configurable via `LLM_MODEL`) |
+| TTS | OpenAI TTS-1 |
 
 ---
 
@@ -321,11 +271,22 @@ Results are saved as CSVs in `benchmarks/results/` and can be analyzed in `noteb
 
 | Milestone | Due | Status |
 |-----------|-----|--------|
-| M0 — Group Formation | Feb 13 | ✅ Done |
-| M1 — Project Proposal | Mar 8 | ✅ Done |
-| M2 — Midway Checkpoint | Apr 5 | 🔄 In Progress |
-| M3 — Wrap Up | May 3 | ⏳ Upcoming |
-| Final Presentation | TBD | ⏳ Upcoming |
+| M0 — Group Formation | Feb 13 | Done |
+| M1 — Project Proposal | Mar 8 | Done |
+| M2 — Midway Checkpoint | Apr 5 | Done |
+| M3 — Wrap Up | May 3 | Upcoming |
+| Final Presentation | TBD | Upcoming |
+
+---
+
+## Roadmap
+
+Planned work for M3:
+
+- **Smart retrieval** — Classify follow-up queries to skip unnecessary re-retrieval when the answer is already in conversation context (e.g. "give me the second recipe", "what are the ingredients")
+- **Streaming pipeline** — Stream LLM and TTS responses to reduce perceived latency
+- **Cross-provider benchmarking** — Swap in alternative STT (Deepgram, Google), LLM (Gemini, Llama 3 via Groq), and TTS (ElevenLabs) providers using the component isolation methodology
+- **Automated benchmark scripts** — Programmatic benchmark runners for reproducible evaluation
 
 ---
 
@@ -333,6 +294,6 @@ Results are saved as CSVs in `benchmarks/results/` and can be analyzed in `noteb
 
 | Member | Primary Role | Secondary |
 |--------|-------------|-----------|
-| **Galal Bichara** | RAG pipeline (ingestion, embedding, retrieval) | Backend API, LLM integration |
-| **TB Rasya Danendra** | Frontend (React), voice UI, STT/TTS integration | Demo preparation |
-| **Majo Salgado** | Benchmarking framework, Q&A test set, evaluation | Dataset curation, EDA |
+| **Galal Bichara** | RAG pipeline, backend API, LLM integration | Pipeline architecture, orchestration |
+| **TB Rasya Danendra** | Frontend (React), voice UI | Demo preparation |
+| **Majo Salgado** | Benchmarking, Q&A test set, evaluation | Dataset curation, EDA |

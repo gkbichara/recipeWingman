@@ -19,8 +19,14 @@ export default function ChatWindow({ messages, isLoading }) {
             <div className={`chat-bubble ${msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-assistant'}`}>
               {msg.role === 'user' ? (
                 <p>{msg.content}</p>
-              ) : (
+              ) : msg.content ? (
                 <ReactMarkdown>{msg.content}</ReactMarkdown>
+              ) : (
+                <span className="chat-typing">
+                  <span className="chat-dot" />
+                  <span className="chat-dot" />
+                  <span className="chat-dot" />
+                </span>
               )}
             </div>
 
@@ -28,7 +34,7 @@ export default function ChatWindow({ messages, isLoading }) {
           </div>
         ))}
 
-        {isLoading && (
+        {isLoading && messages[messages.length - 1]?.role !== 'assistant' && (
           <div className="chat-row chat-row-assistant">
             <div className="chat-avatar">W</div>
             <div className="chat-bubble chat-bubble-assistant chat-typing">
