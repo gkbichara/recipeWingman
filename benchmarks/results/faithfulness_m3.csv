@@ -1,0 +1,24 @@
+pair_id,category,context_setup,question,expected_answer_contains,pass,regression_from_m2,notes
+1,ingredient_quantity,,What ingredients do I need for spaghetti carbonara?,eggs bacon pecorino pasta,,,
+2,ingredient_quantity,,How much flour do I need for basic banana bread?,flour bananas,,,
+3,ingredient_quantity,,What are the ingredients for guacamole?,avocado lime salt,,,
+4,step_order,,What is the first step to make chocolate chip cookies?,preheat oven cream butter,,,
+5,step_order,,After I mix the dry ingredients what do I do next?,wet ingredients combine,,,
+6,time_temperature,,How long do I bake chicken breast at 375?,25 30 minutes internal temperature,,,
+7,time_temperature,,What temperature do I bake a potato?,400 425 degrees,,,
+8,time_temperature,,How long do I cook pasta?,boiling water minutes al dente,,,
+9,substitution,,Can I substitute greek yogurt for sour cream?,yes greek yogurt ratio,,,
+10,substitution,,What can I use instead of buttermilk?,milk vinegar lemon juice,,,
+11,substitution,,Can I use honey instead of sugar?,honey ratio adjust,,,
+12,cross_recipe,,Does this recipe contain nuts?,nut allergy mention,,,
+13,cross_recipe,,Is this recipe gluten free?,gluten wheat flour mention,,,
+14,general_cooking,,How do I know when onions are caramelized?,golden brown soft translucent,,,
+15,general_cooking,,What does it mean to fold ingredients?,gentle stirring combine,,,
+16,smart_retrieval_positional,"User asked for chicken salad recipes, got 3 back",Give me the second one,second chicken salad recipe specifically,,,"CRITICAL: must not return random recipe — verifies smart retrieval"
+17,smart_retrieval_positional,"User asked for pasta recipes, got 3 back",What are the ingredients for the first one,ingredients from first pasta recipe specifically,,,
+18,smart_retrieval_positional,"User asked for dessert recipes",The one with chocolate,chocolate dessert from returned results not hallucinated,,,
+19,smart_retrieval_context,"User is mid-recipe on step 3",What's the next step,step 4 of the active recipe not a different recipe,,,
+20,smart_retrieval_context,"User discussed a lemon chicken recipe",Can I use lime instead of lemon,lime substitution for that specific recipe,,,
+21,smart_retrieval_context,"User asked about baking cookies",How much sugar does it call for,sugar amount from the retrieved cookie recipe not generic,,,"tests that LLM anchors to retrieved doc not parametric memory"
+22,hallucination_check,,How many eggs does carbonara use for 2 people?,2 eggs or 1 egg per person,,,ANTI-hallucination — answer must come from retrieved recipe not generic LLM knowledge
+23,hallucination_check,,What is the exact bake time for this banana bread?,time from retrieved recipe,,,
