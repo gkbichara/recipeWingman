@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RecipeWingman · M3 Benchmark Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0d;
+    --surface: #1a1a16;
+    --surface2: #222220;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0ede6;
+    --muted: #888880;
+    --accent: #e8c547;
+    --accent-dim: rgba(232,197,71,0.12);
+    --green: #5dca8f;
+    --green-dim: rgba(93,202,143,0.12);
+    --red: #e05c5c;
+    --red-dim: rgba(224,92,92,0.12);
+    --blue: #5b9cf6;
+    --blue-dim: rgba(91,156,246,0.12);
+    --orange: #f0883e;
+    --font: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 14px; }
+  body { min-height: 100vh; }
+
+  /* Header */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 32px; border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .logo-text { font-size: 15px; font-weight: 500; }
+  .logo-sub { font-size: 12px; color: var(--muted); font-family: var(--mono); margin-left: 4px; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .deadline { font-family: var(--mono); font-size: 12px; color: var(--orange); background: rgba(240,136,62,0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(240,136,62,0.2); }
+  .team-pill { display: flex; gap: 4px; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; border: 1.5px solid var(--bg); cursor: default; }
+  .av-m { background: #5b9cf6; color: #042c53; }
+  .av-t { background: #5dca8f; color: #04342c; }
+  .av-g { background: #e8c547; color: #412402; }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 220px 1fr; height: calc(100vh - 65px); }
+  nav { border-right: 1px solid var(--border); padding: 20px 0; background: var(--surface); }
+  nav a { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 13px; color: var(--muted); text-decoration: none; cursor: pointer; transition: all 0.15s; border-left: 2px solid transparent; }
+  nav a:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  nav a.active { color: var(--accent); background: var(--accent-dim); border-left-color: var(--accent); }
+  nav a .nav-icon { font-size: 14px; width: 18px; text-align: center; }
+  .nav-section { font-size: 10px; font-family: var(--mono); letter-spacing: 0.1em; color: rgba(255,255,255,0.25); padding: 16px 20px 6px; text-transform: uppercase; }
+  main { overflow-y: auto; padding: 28px 32px; }
+
+  /* Summary bar */
+  .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .stat-label { font-size: 11px; font-family: var(--mono); color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-val { font-size: 26px; font-weight: 300; letter-spacing: -0.02em; }
+  .stat-val.accent { color: var(--accent); }
+  .stat-val.green { color: var(--green); }
+  .stat-val.orange { color: var(--orange); }
+  .stat-val.blue { color: var(--blue); }
+
+  /* Tabs / panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .panel-title { font-size: 18px; font-weight: 300; margin-bottom: 6px; letter-spacing: -0.01em; }
+  .panel-desc { font-size: 12px; color: var(--muted); margin-bottom: 20px; font-family: var(--mono); }
+
+  /* Table */
+  .table-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--surface2); font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); font-weight: 400; letter-spacing: 0.04em; white-space: nowrap; }
+  tbody td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; font-size: 13px; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  /* Inputs */
+  input[type=number], input[type=text] {
+    background: var(--surface2); border: 1px solid var(--border2); border-radius: 4px;
+    color: var(--text); font-family: var(--mono); font-size: 12px; padding: 4px 8px;
+    outline: none; transition: border-color 0.15s;
+  }
+  input[type=number] { width: 72px; text-align: right; }
+  input[type=text] { width: 130px; }
+  input:focus { border-color: var(--accent); }
+  input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
+  select {
+    background: var(--surface2); border: 1px solid var(--border2); border-radius: 4px;
+    color: var(--text); font-size: 12px; padding: 4px 8px; outline: none; cursor: pointer;
+  }
+
+  /* Badges */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: var(--mono); font-weight: 500; }
+  .badge-pass { background: var(--green-dim); color: var(--green); border: 1px solid rgba(93,202,143,0.25); }
+  .badge-fail { background: var(--red-dim); color: var(--red); border: 1px solid rgba(224,92,92,0.25); }
+  .badge-todo { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+  .badge-reg { background: rgba(240,136,62,0.1); color: var(--orange); border: 1px solid rgba(240,136,62,0.2); }
+  .badge-new { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(91,156,246,0.2); font-size: 10px; padding: 1px 5px; margin-left: 4px; }
+
+  /* Buttons */
+  .btn { background: var(--surface2); border: 1px solid var(--border2); border-radius: 5px; color: var(--text); font-size: 12px; padding: 7px 14px; cursor: pointer; transition: all 0.15s; font-family: var(--font); }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary { background: var(--accent); color: #0f0f0d; border-color: var(--accent); font-weight: 500; }
+  .btn-primary:hover { background: #f0d060; color: #0f0f0d; }
+  .btn-sm { padding: 3px 9px; font-size: 11px; }
+
+  /* Row num */
+  .row-num { font-family: var(--mono); font-size: 11px; color: rgba(255,255,255,0.2); width: 28px; }
+  .run-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+  .run-1 { background: var(--blue); }
+  .run-2 { background: var(--green); }
+  .run-3 { background: var(--orange); }
+
+  /* Export textarea */
+  textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--green); font-family: var(--mono); font-size: 12px; padding: 12px; resize: vertical; outline: none; line-height: 1.6; }
+  .export-block { margin-bottom: 20px; }
+  .export-label { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+
+  /* Progress bar */
+  .progress-wrap { background: var(--border); border-radius: 99px; height: 4px; margin-top: 6px; }
+  .progress-bar { height: 4px; border-radius: 99px; background: var(--accent); transition: width 0.4s ease; }
+
+  /* Toast */
+  #toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--accent); color: var(--accent); font-family: var(--mono); font-size: 12px; padding: 8px 16px; border-radius: 6px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+
+  .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .toolbar label { font-size: 12px; color: var(--muted); }
+
+  /* Cross transport */
+  .ct-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .ct-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .ct-title { font-size: 12px; font-family: var(--mono); color: var(--muted); margin-bottom: 10px; }
+  .ct-flow { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 8px; }
+  .ct-arrow { color: var(--accent); font-family: var(--mono); }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    nav { display: flex; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 8px; }
+    nav a { white-space: nowrap; border-left: none; border-bottom: 2px solid transparent; }
+    nav a.active { border-bottom-color: var(--accent); background: none; }
+    .summary { grid-template-columns: 1fr 1fr; }
+    .ct-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🍳</div>
+    <span class="logo-text">RecipeWingman</span>
+    <span class="logo-sub">/ M3 benchmarks</span>
+  </div>
+  <div class="header-right">
+    <span class="deadline">due May 3</span>
+    <div class="team-pill">
+      <div class="avatar av-m" title="Majo — benchmarking">MS</div>
+      <div class="avatar av-t" title="TB — frontend">TB</div>
+      <div class="avatar av-g" title="Galal — backend">GB</div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav>
+    <div class="nav-section">latency</div>
+    <a class="active" onclick="show('text')"><span class="nav-icon">⌨</span> Text chat</a>
+    <a onclick="show('voice')"><span class="nav-icon">🎙</span> Voice chat</a>
+    <a onclick="show('cross')"><span class="nav-icon">⇄</span> Cross-transport</a>
+    <div class="nav-section">quality</div>
+    <a onclick="show('faith')"><span class="nav-icon">✓</span> Faithfulness</a>
+    <a onclick="show('autostop')"><span class="nav-icon">⏹</span> Auto-stop</a>
+    <div class="nav-section">output</div>
+    <a onclick="show('export')"><span class="nav-icon">↓</span> Export CSV</a>
+  </nav>
+
+  <main>
+    <div class="summary">
+      <div class="stat"><div class="stat-label">text queries</div><div class="stat-val blue" id="s-text">0</div><div class="progress-wrap"><div class="progress-bar" id="p-text" style="width:0%"></div></div></div>
+      <div class="stat"><div class="stat-label">voice queries</div><div class="stat-val green" id="s-voice">0</div><div class="progress-wrap"><div class="progress-bar" id="p-voice" style="width:0%;background:var(--green)"></div></div></div>
+      <div class="stat"><div class="stat-label">faithfulness</div><div class="stat-val accent" id="s-faith">—</div><div class="progress-wrap"><div class="progress-bar" id="p-faith" style="width:0%"></div></div></div>
+      <div class="stat"><div class="stat-label">regressions</div><div class="stat-val orange" id="s-reg">0</div></div>
+    </div>
+
+    <!-- TEXT PANEL -->
+    <div id="panel-text" class="panel active">
+      <div class="panel-title">Text chat latency</div>
+      <div class="panel-desc">10–15 queries × 3 runs — read from [TIMING] in uvicorn terminal</div>
+      <div class="toolbar">
+        <label>Run</label>
+        <select id="t-run"><option>1</option><option>2</option><option>3</option></select>
+        <label>Type</label>
+        <select id="t-type">
+          <option value="fresh_search">fresh search</option>
+          <option value="positional_followup">positional follow-up</option>
+          <option value="step_question">step question</option>
+          <option value="substitution">substitution</option>
+          <option value="new_search_mid_convo">new search mid-convo</option>
+          <option value="context_followup">context follow-up</option>
+        </select>
+        <button class="btn btn-primary" onclick="addText()">+ add row</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>run</th><th>query</th><th>type</th>
+            <th>classify_ms</th><th>embed_ms</th><th>retrieval_ms</th><th>llm_ms</th>
+            <th>first_token_ms</th><th>skipped?</th><th></th>
+          </tr></thead>
+          <tbody id="t-body"></tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--muted);font-family:var(--mono);">first_token_ms → browser devtools Network → EventStream timing. skipped_retrieval → smart retrieval fired, no new embedding.</div>
+    </div>
+
+    <!-- VOICE PANEL -->
+    <div id="panel-voice" class="panel">
+      <div class="panel-title">Voice chat latency</div>
+      <div class="panel-desc">5–10 queries × 3 runs — mirrors text list, focus on positional follow-ups</div>
+      <div class="toolbar">
+        <button class="btn btn-primary" onclick="addVoice()">+ add row</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>run</th><th>type</th>
+            <th>stt_ms</th><th>classify_ms</th><th>embed_ms</th><th>retrieval_ms</th><th>llm_ms</th><th>tts_ms</th>
+            <th>skipped?</th><th>auto-stop?</th><th>transcript ok?</th><th>ghost turn?</th><th></th>
+          </tr></thead>
+          <tbody id="v-body"></tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--muted);font-family:var(--mono);">positional follow-ups ("the second one", "the one with spinach") used to fail in M2 — flag any remaining issues</div>
+    </div>
+
+    <!-- CROSS TRANSPORT PANEL -->
+    <div id="panel-cross" class="panel">
+      <div class="panel-title">Cross-transport sessions</div>
+      <div class="panel-desc">3–5 sessions — start in one transport, follow up in the other</div>
+      <div class="ct-grid" id="ct-grid"></div>
+      <button class="btn" onclick="addCT()">+ add session</button>
+    </div>
+
+    <!-- FAITHFULNESS PANEL -->
+    <div id="panel-faith" class="panel">
+      <div class="panel-title">Faithfulness pairs</div>
+      <div class="panel-desc">23 Q&A pairs — 15 from M2 + 8 new smart retrieval / anti-hallucination</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>category</th><th>question</th><th>M3 result</th><th>regression?</th><th>notes</th>
+          </tr></thead>
+          <tbody id="f-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AUTO-STOP PANEL -->
+    <div id="panel-autostop" class="panel">
+      <div class="panel-title">Auto-stop spot checks</div>
+      <div class="panel-desc">Not benchmarks — just verify the feature works correctly</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>scenario</th><th>auto-stopped ~10s?</th><th>ghost turn?</th><th>transcript accurate?</th><th>notes</th>
+          </tr></thead>
+          <tbody id="as-body"></tbody>
+        </table>
+      </div>
+      <button class="btn" style="margin-top:12px" onclick="addAutoStop()">+ add check</button>
+    </div>
+
+    <!-- EXPORT PANEL -->
+    <div id="panel-export" class="panel">
+      <div class="panel-title">Export CSVs</div>
+      <div class="panel-desc">copy into benchmarks/results/ in the repo</div>
+      <button class="btn btn-primary" style="margin-bottom:20px" onclick="buildExport()">Refresh export</button>
+      <div class="export-block">
+        <div class="export-label"><span style="color:var(--accent)">▸</span> text_latency_m3.csv <button class="btn btn-sm" onclick="copyText('ex-text')">copy</button></div>
+        <textarea id="ex-text" rows="8" readonly></textarea>
+      </div>
+      <div class="export-block">
+        <div class="export-label"><span style="color:var(--green)">▸</span> voice_latency_m3.csv <button class="btn btn-sm" onclick="copyText('ex-voice')">copy</button></div>
+        <textarea id="ex-voice" rows="8" readonly></textarea>
+      </div>
+      <div class="export-block">
+        <div class="export-label"><span style="color:var(--blue)">▸</span> faithfulness_m3.csv <button class="btn btn-sm" onclick="copyText('ex-faith')">copy</button></div>
+        <textarea id="ex-faith" rows="10" readonly></textarea>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast">Copied to clipboard</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'rw_m3_tracker_v1';
+let state = {
+  text: [], voice: [], cross: [], autoStop: [],
+  faith: []
+};
+
+const faithPairs = [
+  {id:1, cat:'ingredient_quantity', q:'Ingredients for spaghetti carbonara?'},
+  {id:2, cat:'ingredient_quantity', q:'How much flour for banana bread?'},
+  {id:3, cat:'ingredient_quantity', q:'Ingredients for guacamole?'},
+  {id:4, cat:'step_order', q:'First step for chocolate chip cookies?'},
+  {id:5, cat:'step_order', q:'After mixing dry ingredients, what next?'},
+  {id:6, cat:'time_temp', q:'How long bake chicken breast at 375°?'},
+  {id:7, cat:'time_temp', q:'Temperature to bake a potato?'},
+  {id:8, cat:'time_temp', q:'How long cook pasta?'},
+  {id:9, cat:'substitution', q:'Greek yogurt instead of sour cream?'},
+  {id:10, cat:'substitution', q:'Substitute for buttermilk?'},
+  {id:11, cat:'substitution', q:'Honey instead of sugar?'},
+  {id:12, cat:'cross_recipe', q:'Does this recipe contain nuts?'},
+  {id:13, cat:'cross_recipe', q:'Is this recipe gluten free?'},
+  {id:14, cat:'general', q:'How to know when onions are caramelized?'},
+  {id:15, cat:'general', q:'What does "fold" mean?'},
+  {id:16, cat:'smart_retrieval', q:'"Give me the second one" (after chicken salad)', isNew:true},
+  {id:17, cat:'smart_retrieval', q:'"Ingredients for the first one" (after pasta)', isNew:true},
+  {id:18, cat:'smart_retrieval', q:'"The one with chocolate" (after dessert)', isNew:true},
+  {id:19, cat:'smart_retrieval', q:'"What\'s the next step" (mid-recipe)', isNew:true},
+  {id:20, cat:'smart_retrieval', q:'"Can I use lime instead of lemon?" (lemon chicken)', isNew:true},
+  {id:21, cat:'smart_retrieval', q:'"How much sugar does it call for?" (cookie)', isNew:true},
+  {id:22, cat:'hallucination', q:'Eggs in carbonara for 2 people?', isNew:true},
+  {id:23, cat:'hallucination', q:'Exact bake time for banana bread?', isNew:true},
+];
+
+// ── Persist ─────────────────────────────────────────────────────────────────
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const loaded = JSON.parse(raw);
+      state.text = loaded.text || [];
+      state.voice = loaded.voice || [];
+      state.cross = loaded.cross || [];
+      state.autoStop = loaded.autoStop || [];
+      state.faith = loaded.faith || faithPairs.map(() => ({result:'todo', regression:false, notes:''}));
+    } else {
+      state.faith = faithPairs.map(() => ({result:'todo', regression:false, notes:''}));
+    }
+  } catch(e) {
+    state.faith = faithPairs.map(() => ({result:'todo', regression:false, notes:''}));
+  }
+}
+
+// ── Navigation ──────────────────────────────────────────────────────────────
+function show(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (name === 'export') buildExport();
+}
+
+// ── Text rows ───────────────────────────────────────────────────────────────
+function addText() {
+  state.text.push({
+    run: parseInt(document.getElementById('t-run').value),
+    type: document.getElementById('t-type').value,
+    q:'', classify:'', embed:'', retrieval:'', llm:'', ft:'', skipped:false
+  });
+  save(); renderText();
+}
+function renderText() {
+  const tb = document.getElementById('t-body');
+  tb.innerHTML = '';
+  state.text.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="row-num">${i+1}</td>
+      <td><span class="run-dot run-${r.run}"></span>${r.run}</td>
+      <td><input type="text" placeholder="query…" value="${esc(r.q)}" onchange="state.text[${i}].q=this.value;save()"/></td>
+      <td><select style="font-size:11px;" onchange="state.text[${i}].type=this.value;save()">
+        ${['fresh_search','positional_followup','step_question','substitution','new_search_mid_convo','context_followup'].map(t=>`<option ${r.type===t?'selected':''}>${t}</option>`).join('')}
+      </select></td>
+      <td><input type="number" placeholder="—" value="${r.classify}" onchange="state.text[${i}].classify=this.value;save();updateSummary()"/></td>
+      <td><input type="number" placeholder="—" value="${r.embed}" onchange="state.text[${i}].embed=this.value;save()"/></td>
+      <td><input type="number" placeholder="—" value="${r.retrieval}" onchange="state.text[${i}].retrieval=this.value;save()"/></td>
+      <td><input type="number" placeholder="—" value="${r.llm}" onchange="state.text[${i}].llm=this.value;save()"/></td>
+      <td><input type="number" placeholder="—" value="${r.ft}" onchange="state.text[${i}].ft=this.value;save()"/></td>
+      <td><input type="checkbox" ${r.skipped?'checked':''} onchange="state.text[${i}].skipped=this.checked;save()"/></td>
+      <td><button class="btn btn-sm" onclick="state.text.splice(${i},1);save();renderText();updateSummary()">×</button></td>
+    `;
+    tb.appendChild(tr);
+  });
+  updateSummary();
+}
+
+// ── Voice rows ──────────────────────────────────────────────────────────────
+function addVoice() {
+  state.voice.push({run:1,type:'fresh_search',stt:'',classify:'',embed:'',retrieval:'',llm:'',tts:'',skipped:false,autostop:false,transcript:true,ghost:false});
+  save(); renderVoice();
+}
+function renderVoice() {
+  const tb = document.getElementById('v-body');
+  tb.innerHTML = '';
+  state.voice.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="row-num">${i+1}</td>
+      <td><select style="font-size:11px;" onchange="state.voice[${i}].run=parseInt(this.value);save()"><option ${r.run==1?'selected':''}>1</option><option ${r.run==2?'selected':''}>2</option><option ${r.run==3?'selected':''}>3</option></select></td>
+      <td><select style="font-size:11px;" onchange="state.voice[${i}].type=this.value;save()">
+        ${['fresh_search','positional_followup','step_question','substitution','new_search_mid_convo','auto_stop_silence','auto_stop_no_speech'].map(t=>`<option ${r.type===t?'selected':''}>${t}</option>`).join('')}
+      </select></td>
+      <td><input type="number" placeholder="—" value="${r.stt}" onchange="state.voice[${i}].stt=this.value;save()"/></td>
+      <td><input type="number" placeholder="—" value="${r.classify}" onchange="state.voice[${i}].classify=this.value;save()"/></td>
+      <td><input type="number" placeholder="—" value="${r.embed}" onchange="state.voice[${i}].embed=this.value;save()"/></td>
+      <td><input type="number" placeholder="—" value="${r.retrieval}" onchange="state.voice[${i}].retrieval=this.value;save()"/></td>
+      <td><input type="number" placeholder="—" value="${r.llm}" onchange="state.voice[${i}].llm=this.value;save()"/></td>
+      <td><input type="number" placeholder="—" value="${r.tts}" onchange="state.voice[${i}].tts=this.value;save()"/></td>
+      <td><input type="checkbox" ${r.skipped?'checked':''} onchange="state.voice[${i}].skipped=this.checked;save()"/></td>
+      <td><input type="checkbox" ${r.autostop?'checked':''} onchange="state.voice[${i}].autostop=this.checked;save()"/></td>
+      <td><input type="checkbox" ${r.transcript?'checked':''} onchange="state.voice[${i}].transcript=this.checked;save()"/></td>
+      <td><input type="checkbox" ${r.ghost?'checked':''} onchange="state.voice[${i}].ghost=this.checked;save()"/></td>
+      <td><button class="btn btn-sm" onclick="state.voice.splice(${i},1);save();renderVoice();updateSummary()">×</button></td>
+    `;
+    tb.appendChild(tr);
+  });
+  updateSummary();
+}
+
+// ── Cross-transport ─────────────────────────────────────────────────────────
+const ctTemplates = [
+  {flow:'text → voice', desc:'Start with text query, follow up via voice'},
+  {flow:'voice → text', desc:'Start with voice query, follow up via text'},
+];
+function addCT() {
+  state.cross.push({flow:'text → voice', result:'todo', notes:''});
+  save(); renderCT();
+}
+function renderCT() {
+  const grid = document.getElementById('ct-grid');
+  grid.innerHTML = '';
+  state.cross.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'ct-card';
+    card.innerHTML = `
+      <div class="ct-title">session ${i+1}</div>
+      <div class="ct-flow">
+        <select style="font-size:13px;" onchange="state.cross[${i}].flow=this.value;save()">
+          <option ${r.flow==='text → voice'?'selected':''}>text → voice</option>
+          <option ${r.flow==='voice → text'?'selected':''}>voice → text</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+        <select style="font-size:12px;" onchange="state.cross[${i}].result=this.value;save();renderCT()">
+          <option value="todo" ${r.result==='todo'?'selected':''}>— todo</option>
+          <option value="pass" ${r.result==='pass'?'selected':''}>pass</option>
+          <option value="fail" ${r.result==='fail'?'selected':''}>fail</option>
+        </select>
+        <span class="badge badge-${r.result}">${r.result}</span>
+        <button class="btn btn-sm" onclick="state.cross.splice(${i},1);save();renderCT()">×</button>
+      </div>
+      <div style="margin-top:8px;"><input type="text" placeholder="notes…" value="${esc(r.notes||'')}" style="width:100%;" onchange="state.cross[${i}].notes=this.value;save()"/></div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ── Auto-stop ───────────────────────────────────────────────────────────────
+const asScenarios = ['Speak then silence 10s','Press mic, say nothing'];
+function addAutoStop() {
+  state.autoStop.push({scenario:'Speak then silence 10s', stopped:false, ghost:false, transcript:true, notes:''});
+  save(); renderAutoStop();
+}
+function renderAutoStop() {
+  const tb = document.getElementById('as-body');
+  tb.innerHTML = '';
+  state.autoStop.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="row-num">${i+1}</td>
+      <td><select style="font-size:12px;" onchange="state.autoStop[${i}].scenario=this.value;save()">
+        ${asScenarios.map(s=>`<option ${r.scenario===s?'selected':''}>${s}</option>`).join('')}
+      </select></td>
+      <td style="text-align:center;"><input type="checkbox" ${r.stopped?'checked':''} onchange="state.autoStop[${i}].stopped=this.checked;save()"/></td>
+      <td style="text-align:center;"><input type="checkbox" ${r.ghost?'checked':''} onchange="state.autoStop[${i}].ghost=this.checked;save()"/></td>
+      <td style="text-align:center;"><input type="checkbox" ${r.transcript?'checked':''} onchange="state.autoStop[${i}].transcript=this.checked;save()"/></td>
+      <td><input type="text" placeholder="notes…" value="${esc(r.notes||'')}" style="width:100%;" onchange="state.autoStop[${i}].notes=this.value;save()"/></td>
+    `;
+    tb.appendChild(tr);
+  });
+}
+
+// ── Faithfulness ────────────────────────────────────────────────────────────
+function renderFaith() {
+  while (state.faith.length < faithPairs.length) state.faith.push({result:'todo',regression:false,notes:''});
+  const tb = document.getElementById('f-body');
+  tb.innerHTML = '';
+  faithPairs.forEach((p, i) => {
+    const st = state.faith[i];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="row-num">${p.id}${p.isNew?'<span class="badge-new">new</span>':''}</td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--muted);">${p.cat}</td>
+      <td style="font-size:12px;max-width:200px;">${p.q}</td>
+      <td>
+        <select style="font-size:12px;margin-right:6px;" onchange="state.faith[${i}].result=this.value;save();renderFaith();updateSummary()">
+          <option value="todo" ${st.result==='todo'?'selected':''}>— todo</option>
+          <option value="pass" ${st.result==='pass'?'selected':''}>pass</option>
+          <option value="fail" ${st.result==='fail'?'selected':''}>fail</option>
+        </select>
+        <span class="badge badge-${st.result}">${st.result}</span>
+      </td>
+      <td style="text-align:center;"><input type="checkbox" ${st.regression?'checked':''} onchange="state.faith[${i}].regression=this.checked;save();updateSummary()"/></td>
+      <td><input type="text" placeholder="notes…" value="${esc(st.notes||'')}" style="width:100%;" onchange="state.faith[${i}].notes=this.value;save()"/></td>
+    `;
+    tb.appendChild(tr);
+  });
+  updateSummary();
+}
+
+// ── Summary ─────────────────────────────────────────────────────────────────
+function updateSummary() {
+  const tgt = 39; // 13 queries × 3 runs
+  const vgt = 24; // 8 queries × 3 runs
+  document.getElementById('s-text').textContent = state.text.length;
+  document.getElementById('p-text').style.width = Math.min(100, Math.round(state.text.length/tgt*100))+'%';
+  document.getElementById('s-voice').textContent = state.voice.length;
+  document.getElementById('p-voice').style.width = Math.min(100, Math.round(state.voice.length/vgt*100))+'%';
+  const done = state.faith.filter(s=>s.result!=='todo');
+  const pass = state.faith.filter(s=>s.result==='pass');
+  const pct = done.length ? Math.round(pass.length/done.length*100) : null;
+  document.getElementById('s-faith').textContent = pct !== null ? pct+'%' : '—';
+  document.getElementById('p-faith').style.width = (pct||0)+'%';
+  document.getElementById('s-reg').textContent = state.faith.filter(s=>s.regression).length;
+}
+
+// ── Export ──────────────────────────────────────────────────────────────────
+function buildExport() {
+  const th = 'run_id,query_id,query_text,query_type,classify_ms,embedding_ms,retrieval_ms,llm_ms,skipped_retrieval,first_token_latency_ms';
+  const trows = state.text.map((r,i)=>`${r.run},${i+1},"${r.q}",${r.type},${r.classify||''},${r.embed||''},${r.retrieval||''},${r.llm||''},${r.skipped},${r.ft||''}`);
+  document.getElementById('ex-text').value = [th,...trows].join('\n');
+
+  const vh = 'run_id,query_id,query_type,stt_ms,classify_ms,embedding_ms,retrieval_ms,llm_ms,tts_ms,skipped_retrieval,auto_stop_fired,transcript_match,ghost_turn';
+  const vrows = state.voice.map((r,i)=>`${r.run},${i+1},${r.type},${r.stt||''},${r.classify||''},${r.embed||''},${r.retrieval||''},${r.llm||''},${r.tts||''},${r.skipped},${r.autostop},${r.transcript},${r.ghost}`);
+  document.getElementById('ex-voice').value = [vh,...vrows].join('\n');
+
+  const fh = 'pair_id,category,question,pass,regression_from_m2,notes';
+  const frows = faithPairs.map((p,i)=>`${p.id},${p.cat},"${p.q}",${state.faith[i]?.result||'todo'},${state.faith[i]?.regression||false},"${state.faith[i]?.notes||''}"`);
+  document.getElementById('ex-faith').value = [fh,...frows].join('\n');
+}
+
+function copyText(id) {
+  navigator.clipboard.writeText(document.getElementById(id).value).then(()=>toast());
+}
+function toast() {
+  const t = document.getElementById('toast');
+  t.style.opacity = '1';
+  setTimeout(()=>t.style.opacity='0', 1800);
+}
+function esc(s) { return String(s||'').replace(/"/g,'&quot;'); }
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+load();
+renderText();
+renderVoice();
+renderCT();
+renderAutoStop();
+renderFaith();
+updateSummary();
+</script>
+</body>
+</html>
