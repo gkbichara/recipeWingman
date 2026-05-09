@@ -17,22 +17,21 @@ Usage:
 """
 
 import argparse
+import ast
 import csv
-import json
 import os
 import re
 import sys
-from datetime import datetime
-from pathlib import Path
 
-# ── Expected [TIMING] format ────────────────────────────────────────────────
-# The pipeline.py should emit lines like:
-#   [TIMING] classify_ms=12 embedding_ms=45 retrieval_ms=88 llm_ms=1203 skipped_retrieval=false
-# Voice additionally includes:
-#   [TIMING] stt_ms=340 classify_ms=12 embedding_ms=45 retrieval_ms=88 llm_ms=1203 tts_ms=890 skipped_retrieval=false
+# ── [TIMING] log formats ────────────────────────────────────────────────────
+# backend/main.py and backend/agent/pipeline.py emit a Python dict repr:
+#   [TIMING] {'classify_ms': 12, 'embedding_ms': 45, 'retrieval_ms': 88, 'llm_ms': 1203, 'skipped_retrieval': False}
+# Voice variants additionally include 'stt_ms' / 'tts_ms'.
+# We also accept the legacy key=value form for backward compatibility:
+#   [TIMING] classify_ms=12 embedding_ms=45 ...
 
 TIMING_RE = re.compile(r"\[TIMING\]\s+(.+)")
-KV_RE = re.compile(r"(\w+)=([^\s]+)")
+KV_RE = re.compile(r"(\w+)=([^\s,]+)")
 
 TEXT_FIELDS = [
     "run_id", "query_id", "query_text", "query_type",
@@ -52,8 +51,15 @@ def parse_timing_line(line: str) -> dict | None:
     m = TIMING_RE.search(line)
     if not m:
         return None
-    pairs = KV_RE.findall(m.group(1))
-    return {k: v for k, v in pairs}
+    payload = m.group(1).strip()
+    try:
+        d = ast.literal_eval(payload)
+        if isinstance(d, dict):
+            return {str(k): str(v) for k, v in d.items()}
+    except (SyntaxError, ValueError):
+        pass
+    pairs = KV_RE.findall(payload)
+    return {k: v for k, v in pairs} if pairs else None
 
 
 def is_voice(record: dict) -> bool:
@@ -70,15 +76,16 @@ def load_log(path: str) -> list[dict]:
     return records
 
 
-def write_csv(path: str, fieldnames: list[str], rows: list[dict]):
+def write_csv(path: str, fieldnames: list[str], rows: list[dict], append: bool):
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-    file_exists = os.path.exists(path)
-    with open(path, "a", newline="") as f:
+    mode = "a" if append and os.path.exists(path) else "w"
+    with open(path, mode, newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
-        if not file_exists:
+        if mode == "w":
             writer.writeheader()
         writer.writerows(rows)
-    print(f"  → wrote {len(rows)} rows to {path}")
+    verb = "appended" if mode == "a" else "wrote"
+    print(f"  → {verb} {len(rows)} rows to {path}")
 
 
 def enrich(record: dict, run_id: int, query_id: int) -> dict:
@@ -97,6 +104,8 @@ def main():
     parser.add_argument("--mode", choices=["text", "voice", "both"], default="both")
     parser.add_argument("--run-id", type=int, default=1, help="Run number (1, 2, or 3)")
     parser.add_argument("--out", default="benchmarks/results/", help="Output directory")
+    parser.add_argument("--append", action="store_true",
+                        help="Append to existing CSVs (default: overwrite, so seeded placeholder rows get cleared on first real run)")
     args = parser.parse_args()
 
     print(f"\nParsing: {args.log}")
@@ -110,18 +119,20 @@ def main():
 
     if not records:
         print("\n⚠️  No [TIMING] lines found. Make sure your pipeline emits them.")
-        print("   Expected format: [TIMING] classify_ms=12 embedding_ms=45 ...")
+        print("   Accepted formats:")
+        print("     [TIMING] {'classify_ms': 12, 'embedding_ms': 45, ...}")
+        print("     [TIMING] classify_ms=12 embedding_ms=45 ...")
         sys.exit(1)
 
     out = args.out.rstrip("/")
 
     if args.mode in ("text", "both") and text_records:
         rows = [enrich(r, args.run_id, i + 1) for i, r in enumerate(text_records)]
-        write_csv(f"{out}/text_latency_m3.csv", TEXT_FIELDS, rows)
+        write_csv(f"{out}/text_latency_m3.csv", TEXT_FIELDS, rows, args.append)
 
     if args.mode in ("voice", "both") and voice_records:
         rows = [enrich(r, args.run_id, i + 1) for i, r in enumerate(voice_records)]
-        write_csv(f"{out}/voice_latency_m3.csv", VOICE_FIELDS, rows)
+        write_csv(f"{out}/voice_latency_m3.csv", VOICE_FIELDS, rows, args.append)
 
     print("\nDone ✓")
     print("Next: fill in query_text, query_type, first_token_latency_ms, and notes manually.")

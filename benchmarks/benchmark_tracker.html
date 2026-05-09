@@ -172,14 +172,14 @@
 <div class="layout">
   <nav>
     <div class="nav-section">latency</div>
-    <a class="active" onclick="show('text')"><span class="nav-icon">⌨</span> Text chat</a>
-    <a onclick="show('voice')"><span class="nav-icon">🎙</span> Voice chat</a>
-    <a onclick="show('cross')"><span class="nav-icon">⇄</span> Cross-transport</a>
+    <a class="active" onclick="show(event, 'text')"><span class="nav-icon">⌨</span> Text chat</a>
+    <a onclick="show(event, 'voice')"><span class="nav-icon">🎙</span> Voice chat</a>
+    <a onclick="show(event, 'cross')"><span class="nav-icon">⇄</span> Cross-transport</a>
     <div class="nav-section">quality</div>
-    <a onclick="show('faith')"><span class="nav-icon">✓</span> Faithfulness</a>
-    <a onclick="show('autostop')"><span class="nav-icon">⏹</span> Auto-stop</a>
+    <a onclick="show(event, 'faith')"><span class="nav-icon">✓</span> Faithfulness</a>
+    <a onclick="show(event, 'autostop')"><span class="nav-icon">⏹</span> Auto-stop</a>
     <div class="nav-section">output</div>
-    <a onclick="show('export')"><span class="nav-icon">↓</span> Export CSV</a>
+    <a onclick="show(event, 'export')"><span class="nav-icon">↓</span> Export CSV</a>
   </nav>
 
   <main>
@@ -309,30 +309,32 @@ let state = {
   faith: []
 };
 
+// Canonical question/category/context wording mirrors benchmarks/results/faithfulness_m3.csv
+// so exports overwrite the seeded file with consistent rows.
 const faithPairs = [
-  {id:1, cat:'ingredient_quantity', q:'Ingredients for spaghetti carbonara?'},
-  {id:2, cat:'ingredient_quantity', q:'How much flour for banana bread?'},
-  {id:3, cat:'ingredient_quantity', q:'Ingredients for guacamole?'},
-  {id:4, cat:'step_order', q:'First step for chocolate chip cookies?'},
-  {id:5, cat:'step_order', q:'After mixing dry ingredients, what next?'},
-  {id:6, cat:'time_temp', q:'How long bake chicken breast at 375°?'},
-  {id:7, cat:'time_temp', q:'Temperature to bake a potato?'},
-  {id:8, cat:'time_temp', q:'How long cook pasta?'},
-  {id:9, cat:'substitution', q:'Greek yogurt instead of sour cream?'},
-  {id:10, cat:'substitution', q:'Substitute for buttermilk?'},
-  {id:11, cat:'substitution', q:'Honey instead of sugar?'},
-  {id:12, cat:'cross_recipe', q:'Does this recipe contain nuts?'},
-  {id:13, cat:'cross_recipe', q:'Is this recipe gluten free?'},
-  {id:14, cat:'general', q:'How to know when onions are caramelized?'},
-  {id:15, cat:'general', q:'What does "fold" mean?'},
-  {id:16, cat:'smart_retrieval', q:'"Give me the second one" (after chicken salad)', isNew:true},
-  {id:17, cat:'smart_retrieval', q:'"Ingredients for the first one" (after pasta)', isNew:true},
-  {id:18, cat:'smart_retrieval', q:'"The one with chocolate" (after dessert)', isNew:true},
-  {id:19, cat:'smart_retrieval', q:'"What\'s the next step" (mid-recipe)', isNew:true},
-  {id:20, cat:'smart_retrieval', q:'"Can I use lime instead of lemon?" (lemon chicken)', isNew:true},
-  {id:21, cat:'smart_retrieval', q:'"How much sugar does it call for?" (cookie)', isNew:true},
-  {id:22, cat:'hallucination', q:'Eggs in carbonara for 2 people?', isNew:true},
-  {id:23, cat:'hallucination', q:'Exact bake time for banana bread?', isNew:true},
+  {id:1, cat:'ingredient_quantity', context:'', q:'What ingredients do I need for spaghetti carbonara?', expected:'eggs bacon pecorino pasta'},
+  {id:2, cat:'ingredient_quantity', context:'', q:'How much flour do I need for basic banana bread?', expected:'flour bananas'},
+  {id:3, cat:'ingredient_quantity', context:'', q:'What are the ingredients for guacamole?', expected:'avocado lime salt'},
+  {id:4, cat:'step_order', context:'', q:'What is the first step to make chocolate chip cookies?', expected:'preheat oven cream butter'},
+  {id:5, cat:'step_order', context:'', q:'After I mix the dry ingredients what do I do next?', expected:'wet ingredients combine'},
+  {id:6, cat:'time_temperature', context:'', q:'How long do I bake chicken breast at 375?', expected:'25 30 minutes internal temperature'},
+  {id:7, cat:'time_temperature', context:'', q:'What temperature do I bake a potato?', expected:'400 425 degrees'},
+  {id:8, cat:'time_temperature', context:'', q:'How long do I cook pasta?', expected:'boiling water minutes al dente'},
+  {id:9, cat:'substitution', context:'', q:'Can I substitute greek yogurt for sour cream?', expected:'yes greek yogurt ratio'},
+  {id:10, cat:'substitution', context:'', q:'What can I use instead of buttermilk?', expected:'milk vinegar lemon juice'},
+  {id:11, cat:'substitution', context:'', q:'Can I use honey instead of sugar?', expected:'honey ratio adjust'},
+  {id:12, cat:'cross_recipe', context:'', q:'Does this recipe contain nuts?', expected:'nut allergy mention'},
+  {id:13, cat:'cross_recipe', context:'', q:'Is this recipe gluten free?', expected:'gluten wheat flour mention'},
+  {id:14, cat:'general_cooking', context:'', q:'How do I know when onions are caramelized?', expected:'golden brown soft translucent'},
+  {id:15, cat:'general_cooking', context:'', q:'What does it mean to fold ingredients?', expected:'gentle stirring combine'},
+  {id:16, cat:'smart_retrieval_positional', context:'User asked for chicken salad recipes, got 3 back', q:'Give me the second one', expected:'second chicken salad recipe specifically', isNew:true},
+  {id:17, cat:'smart_retrieval_positional', context:'User asked for pasta recipes, got 3 back', q:'What are the ingredients for the first one', expected:'ingredients from first pasta recipe specifically', isNew:true},
+  {id:18, cat:'smart_retrieval_positional', context:'User asked for dessert recipes', q:'The one with chocolate', expected:'chocolate dessert from returned results not hallucinated', isNew:true},
+  {id:19, cat:'smart_retrieval_context', context:'User is mid-recipe on step 3', q:"What's the next step", expected:'step 4 of the active recipe not a different recipe', isNew:true},
+  {id:20, cat:'smart_retrieval_context', context:'User discussed a lemon chicken recipe', q:'Can I use lime instead of lemon', expected:'lime substitution for that specific recipe', isNew:true},
+  {id:21, cat:'smart_retrieval_context', context:'User asked about baking cookies', q:'How much sugar does it call for', expected:'sugar amount from the retrieved cookie recipe not generic', isNew:true},
+  {id:22, cat:'hallucination_check', context:'', q:'How many eggs does carbonara use for 2 people?', expected:'2 eggs or 1 egg per person', isNew:true},
+  {id:23, cat:'hallucination_check', context:'', q:'What is the exact bake time for this banana bread?', expected:'time from retrieved recipe', isNew:true},
 ];
 
 // ── Persist ─────────────────────────────────────────────────────────────────
@@ -358,11 +360,11 @@ function load() {
 }
 
 // ── Navigation ──────────────────────────────────────────────────────────────
-function show(name) {
+function show(ev, name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  event.currentTarget.classList.add('active');
+  if (ev && ev.currentTarget) ev.currentTarget.classList.add('active');
   if (name === 'export') buildExport();
 }
 
@@ -506,8 +508,11 @@ function renderFaith() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td class="row-num">${p.id}${p.isNew?'<span class="badge-new">new</span>':''}</td>
-      <td style="font-family:var(--mono);font-size:11px;color:var(--muted);">${p.cat}</td>
-      <td style="font-size:12px;max-width:200px;">${p.q}</td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--muted);">${esc(p.cat)}</td>
+      <td style="font-size:12px;max-width:240px;">
+        ${p.context?`<div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px;">setup: ${esc(p.context)}</div>`:''}
+        ${esc(p.q)}
+      </td>
       <td>
         <select style="font-size:12px;margin-right:6px;" onchange="state.faith[${i}].result=this.value;save();renderFaith();updateSummary()">
           <option value="todo" ${st.result==='todo'?'selected':''}>— todo</option>
@@ -541,18 +546,26 @@ function updateSummary() {
 }
 
 // ── Export ──────────────────────────────────────────────────────────────────
+// RFC-4180 CSV cell: quote any field containing ", , \r or \n; double embedded quotes.
+function csvCell(v) {
+  const s = v === null || v === undefined ? '' : String(v);
+  return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+function csvRow(arr) { return arr.map(csvCell).join(','); }
+
 function buildExport() {
-  const th = 'run_id,query_id,query_text,query_type,classify_ms,embedding_ms,retrieval_ms,llm_ms,skipped_retrieval,first_token_latency_ms';
-  const trows = state.text.map((r,i)=>`${r.run},${i+1},"${r.q}",${r.type},${r.classify||''},${r.embed||''},${r.retrieval||''},${r.llm||''},${r.skipped},${r.ft||''}`);
-  document.getElementById('ex-text').value = [th,...trows].join('\n');
+  // Schemas mirror benchmarks/results/*.csv so exports can replace those files cleanly.
+  const th = ['run_id','query_id','query_text','query_type','classify_ms','embedding_ms','retrieval_ms','llm_ms','skipped_retrieval','first_token_latency_ms','notes'];
+  const trows = state.text.map((r,i)=>csvRow([r.run, i+1, r.q, r.type, r.classify||'', r.embed||'', r.retrieval||'', r.llm||'', r.skipped, r.ft||'', '']));
+  document.getElementById('ex-text').value = [th.join(','), ...trows].join('\n');
 
-  const vh = 'run_id,query_id,query_type,stt_ms,classify_ms,embedding_ms,retrieval_ms,llm_ms,tts_ms,skipped_retrieval,auto_stop_fired,transcript_match,ghost_turn';
-  const vrows = state.voice.map((r,i)=>`${r.run},${i+1},${r.type},${r.stt||''},${r.classify||''},${r.embed||''},${r.retrieval||''},${r.llm||''},${r.tts||''},${r.skipped},${r.autostop},${r.transcript},${r.ghost}`);
-  document.getElementById('ex-voice').value = [vh,...vrows].join('\n');
+  const vh = ['run_id','query_id','query_text','query_type','stt_ms','classify_ms','embedding_ms','retrieval_ms','llm_ms','tts_ms','skipped_retrieval','auto_stop_fired','transcript_match','ghost_turn','notes'];
+  const vrows = state.voice.map((r,i)=>csvRow([r.run, i+1, '', r.type, r.stt||'', r.classify||'', r.embed||'', r.retrieval||'', r.llm||'', r.tts||'', r.skipped, r.autostop, r.transcript, r.ghost, '']));
+  document.getElementById('ex-voice').value = [vh.join(','), ...vrows].join('\n');
 
-  const fh = 'pair_id,category,question,pass,regression_from_m2,notes';
-  const frows = faithPairs.map((p,i)=>`${p.id},${p.cat},"${p.q}",${state.faith[i]?.result||'todo'},${state.faith[i]?.regression||false},"${state.faith[i]?.notes||''}"`);
-  document.getElementById('ex-faith').value = [fh,...frows].join('\n');
+  const fh = ['pair_id','category','context_setup','question','expected_answer_contains','pass','regression_from_m2','notes'];
+  const frows = faithPairs.map((p,i)=>csvRow([p.id, p.cat, p.context||'', p.q, p.expected||'', state.faith[i]?.result||'todo', state.faith[i]?.regression||false, state.faith[i]?.notes||'']));
+  document.getElementById('ex-faith').value = [fh.join(','), ...frows].join('\n');
 }
 
 function copyText(id) {
@@ -563,7 +576,13 @@ function toast() {
   t.style.opacity = '1';
   setTimeout(()=>t.style.opacity='0', 1800);
 }
-function esc(s) { return String(s||'').replace(/"/g,'&quot;'); }
+function esc(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 load();
