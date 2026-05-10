@@ -1,0 +1,164 @@
+INFO:     Will watch for changes in these directories: ['/Users/mariajosesalgado/Documents/2026 /Advanced_Topics/recipeWingman-1']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [85617] using WatchFiles
+INFO:     Started server process [85620]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:0 - "GET /cart.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58006 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 0, 'embedding_ms': 1647, 'retrieval_ms': 14, 'llm_ms': 1979, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58054 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1580, 'embedding_ms': 582, 'retrieval_ms': 4, 'llm_ms': 3230, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58116 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 736, 'embedding_ms': 710, 'retrieval_ms': 3, 'llm_ms': 959, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58159 - "OPTIONS /api/chat/stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58159 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 809, 'embedding_ms': 220, 'retrieval_ms': 2, 'llm_ms': 3647, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58287 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1061, 'embedding_ms': 661, 'retrieval_ms': 4, 'llm_ms': 875, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58315 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 2125, 'embedding_ms': 431, 'retrieval_ms': 5, 'llm_ms': 2127, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58324 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 699, 'embedding_ms': 313, 'retrieval_ms': 2, 'llm_ms': 2181, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58334 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1126, 'embedding_ms': 659, 'retrieval_ms': 3, 'llm_ms': 3024, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58341 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 849, 'embedding_ms': 509, 'retrieval_ms': 2, 'llm_ms': 2882, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58369 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 2221, 'embedding_ms': 582, 'retrieval_ms': 3, 'llm_ms': 2969, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58379 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1823, 'embedding_ms': 713, 'retrieval_ms': 6, 'llm_ms': 1269, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58388 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1369, 'embedding_ms': 302, 'retrieval_ms': 3, 'llm_ms': 1733, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58397 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 2093, 'embedding_ms': 355, 'retrieval_ms': 3, 'llm_ms': 4536, 'skipped_retrieval': False}
+INFO:     127.0.0.1:0 - "GET /cart.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58495 - "OPTIONS /api/chat/stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58495 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 0, 'embedding_ms': 529, 'retrieval_ms': 3, 'llm_ms': 1896, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58495 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1256, 'embedding_ms': 317, 'retrieval_ms': 4, 'llm_ms': 4802, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58495 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1670, 'embedding_ms': 231, 'retrieval_ms': 3, 'llm_ms': 1561, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58495 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 729, 'embedding_ms': 975, 'retrieval_ms': 1, 'llm_ms': 2186, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58495 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 756, 'embedding_ms': 549, 'retrieval_ms': 3, 'llm_ms': 1097, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58511 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1159, 'embedding_ms': 455, 'retrieval_ms': 4, 'llm_ms': 2329, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58511 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1079, 'embedding_ms': 505, 'retrieval_ms': 2, 'llm_ms': 1399, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58524 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 985, 'embedding_ms': 382, 'retrieval_ms': 3, 'llm_ms': 1156, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58524 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 855, 'embedding_ms': 364, 'retrieval_ms': 4, 'llm_ms': 1596, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58524 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 6051, 'embedding_ms': 399, 'retrieval_ms': 2, 'llm_ms': 1278, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58524 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 837, 'embedding_ms': 371, 'retrieval_ms': 2, 'llm_ms': 1045, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58524 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1557, 'embedding_ms': 566, 'retrieval_ms': 4, 'llm_ms': 1790, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58524 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1240, 'embedding_ms': 261, 'retrieval_ms': 2, 'llm_ms': 929, 'skipped_retrieval': False}
+INFO:     127.0.0.1:0 - "GET /cart.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 0, 'embedding_ms': 887, 'retrieval_ms': 4, 'llm_ms': 1186, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1176, 'embedding_ms': 322, 'retrieval_ms': 4, 'llm_ms': 1618, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 956, 'embedding_ms': 517, 'retrieval_ms': 2, 'llm_ms': 825, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1056, 'embedding_ms': 266, 'retrieval_ms': 3, 'llm_ms': 1604, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 992, 'embedding_ms': 309, 'retrieval_ms': 1, 'llm_ms': 868, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 680, 'embedding_ms': 1333, 'retrieval_ms': 2, 'llm_ms': 1171, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 694, 'embedding_ms': 721, 'retrieval_ms': 1, 'llm_ms': 1338, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 525, 'embedding_ms': 376, 'retrieval_ms': 4, 'llm_ms': 1725, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 737, 'embedding_ms': 693, 'retrieval_ms': 2, 'llm_ms': 1210, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 842, 'embedding_ms': 228, 'retrieval_ms': 1, 'llm_ms': 1315, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 921, 'embedding_ms': 350, 'retrieval_ms': 2, 'llm_ms': 1667, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 682, 'embedding_ms': 300, 'retrieval_ms': 2, 'llm_ms': 1949, 'skipped_retrieval': False}
+INFO:     127.0.0.1:58629 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1593, 'embedding_ms': 796, 'retrieval_ms': 1, 'llm_ms': 931, 'skipped_retrieval': False}
+INFO:     127.0.0.1:0 - "GET /cart.json HTTP/1.1" 404 Not Found
+[TIMING] {'classify_ms': 0, 'embedding_ms': 1380, 'retrieval_ms': 32, 'llm_ms': 1531, 'skipped_retrieval': False, 'stt_ms': 3664, 'tts_ms': 2032}
+INFO:     127.0.0.1:59357 - "POST /api/voice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+[TIMING] {'classify_ms': 986, 'embedding_ms': 558, 'retrieval_ms': 2, 'llm_ms': 1195, 'skipped_retrieval': False, 'stt_ms': 1680, 'tts_ms': 4408}
+INFO:     127.0.0.1:59379 - "POST /api/voice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /cart.json HTTP/1.1" 404 Not Found
+[TIMING] {'classify_ms': 0, 'embedding_ms': 604, 'retrieval_ms': 4, 'llm_ms': 1909, 'skipped_retrieval': False, 'stt_ms': 2638, 'tts_ms': 4046}
+INFO:     127.0.0.1:59428 - "POST /api/voice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+[TIMING] {'classify_ms': 799, 'embedding_ms': 246, 'retrieval_ms': 2, 'llm_ms': 3103, 'skipped_retrieval': False, 'stt_ms': 900, 'tts_ms': 11287}
+INFO:     127.0.0.1:59439 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 612, 'embedding_ms': 339, 'retrieval_ms': 1, 'llm_ms': 1036, 'skipped_retrieval': False, 'stt_ms': 968, 'tts_ms': 5314}
+INFO:     127.0.0.1:59456 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 824, 'embedding_ms': 289, 'retrieval_ms': 2, 'llm_ms': 2152, 'skipped_retrieval': False, 'stt_ms': 717, 'tts_ms': 7678}
+INFO:     127.0.0.1:59471 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 691, 'embedding_ms': 333, 'retrieval_ms': 1, 'llm_ms': 1009, 'skipped_retrieval': False, 'stt_ms': 1649, 'tts_ms': 3707}
+INFO:     127.0.0.1:59482 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 586, 'embedding_ms': 310, 'retrieval_ms': 4, 'llm_ms': 1011, 'skipped_retrieval': False, 'stt_ms': 540, 'tts_ms': 4570}
+INFO:     127.0.0.1:59489 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 995, 'embedding_ms': 324, 'retrieval_ms': 2, 'llm_ms': 1428, 'skipped_retrieval': False, 'stt_ms': 3606, 'tts_ms': 3699}
+INFO:     127.0.0.1:59508 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1021, 'embedding_ms': 297, 'retrieval_ms': 3, 'llm_ms': 1095, 'skipped_retrieval': False, 'stt_ms': 28935, 'tts_ms': 5123}
+INFO:     127.0.0.1:59578 - "POST /api/voice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /cart.json HTTP/1.1" 404 Not Found
+[TIMING] {'classify_ms': 0, 'embedding_ms': 511, 'retrieval_ms': 3, 'llm_ms': 1241, 'skipped_retrieval': False, 'stt_ms': 1678, 'tts_ms': 4903}
+INFO:     127.0.0.1:59652 - "POST /api/voice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+[TIMING] {'classify_ms': 708, 'embedding_ms': 418, 'retrieval_ms': 4, 'llm_ms': 1882, 'skipped_retrieval': False, 'stt_ms': 659, 'tts_ms': 9766}
+INFO:     127.0.0.1:59695 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1198, 'embedding_ms': 411, 'retrieval_ms': 2, 'llm_ms': 3121, 'skipped_retrieval': False, 'stt_ms': 1851, 'tts_ms': 4139}
+INFO:     127.0.0.1:59700 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1845, 'embedding_ms': 365, 'retrieval_ms': 2, 'llm_ms': 1584, 'skipped_retrieval': False, 'stt_ms': 1649, 'tts_ms': 7679}
+INFO:     127.0.0.1:59711 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 648, 'embedding_ms': 378, 'retrieval_ms': 2, 'llm_ms': 1083, 'skipped_retrieval': False, 'stt_ms': 1213, 'tts_ms': 3039}
+INFO:     127.0.0.1:59722 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 972, 'embedding_ms': 218, 'retrieval_ms': 2, 'llm_ms': 1079, 'skipped_retrieval': False, 'stt_ms': 821, 'tts_ms': 5134}
+INFO:     127.0.0.1:59728 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1283, 'embedding_ms': 284, 'retrieval_ms': 2, 'llm_ms': 2486, 'skipped_retrieval': False, 'stt_ms': 18648, 'tts_ms': 6840}
+INFO:     127.0.0.1:59811 - "POST /api/voice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /cart.json HTTP/1.1" 404 Not Found
+[TIMING] {'classify_ms': 0, 'embedding_ms': 380, 'retrieval_ms': 3, 'llm_ms': 2272, 'skipped_retrieval': False, 'stt_ms': 1161, 'tts_ms': 6515}
+INFO:     127.0.0.1:59859 - "POST /api/voice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+[TIMING] {'classify_ms': 1075, 'embedding_ms': 289, 'retrieval_ms': 1, 'llm_ms': 3380, 'skipped_retrieval': False, 'stt_ms': 948, 'tts_ms': 12818}
+INFO:     127.0.0.1:59871 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 1025, 'embedding_ms': 619, 'retrieval_ms': 1, 'llm_ms': 826, 'skipped_retrieval': False, 'stt_ms': 927, 'tts_ms': 2762}
+INFO:     127.0.0.1:59887 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 859, 'embedding_ms': 786, 'retrieval_ms': 2, 'llm_ms': 1714, 'skipped_retrieval': False, 'stt_ms': 1850, 'tts_ms': 7138}
+INFO:     127.0.0.1:59908 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 584, 'embedding_ms': 542, 'retrieval_ms': 1, 'llm_ms': 1110, 'skipped_retrieval': False, 'stt_ms': 833, 'tts_ms': 3699}
+INFO:     127.0.0.1:59930 - "POST /api/voice HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 814, 'embedding_ms': 307, 'retrieval_ms': 2, 'llm_ms': 1200, 'skipped_retrieval': False, 'stt_ms': 1280, 'tts_ms': 3869}
+INFO:     127.0.0.1:59947 - "POST /api/voice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /cart.json HTTP/1.1" 404 Not Found
+[TIMING] {'classify_ms': 0, 'embedding_ms': 240, 'retrieval_ms': 4, 'llm_ms': 1169, 'skipped_retrieval': False, 'stt_ms': 1458, 'tts_ms': 2801}
+INFO:     127.0.0.1:0 - "GET /cart.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60297 - "OPTIONS /api/chat/stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60297 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 0, 'embedding_ms': 493, 'retrieval_ms': 3, 'llm_ms': 2112, 'skipped_retrieval': False}
+[TIMING] {'classify_ms': 709, 'embedding_ms': 544, 'retrieval_ms': 2, 'llm_ms': 3344, 'skipped_retrieval': False, 'stt_ms': 694, 'tts_ms': 13596}
+INFO:     127.0.0.1:60302 - "POST /api/voice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:0 - "GET /cart.json HTTP/1.1" 404 Not Found
+[TIMING] {'classify_ms': 0, 'embedding_ms': 242, 'retrieval_ms': 3, 'llm_ms': 1871, 'skipped_retrieval': False, 'stt_ms': 532, 'tts_ms': 5006}
+INFO:     127.0.0.1:60335 - "POST /api/voice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60362 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 701, 'embedding_ms': 213, 'retrieval_ms': 3, 'llm_ms': 1023, 'skipped_retrieval': False}
+INFO:     127.0.0.1:0 - "GET /cart.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60398 - "POST /api/chat/stream HTTP/1.1" 200 OK
+[TIMING] {'classify_ms': 0, 'embedding_ms': 382, 'retrieval_ms': 7, 'llm_ms': 1501, 'skipped_retrieval': False}
+[TIMING] {'classify_ms': 567, 'embedding_ms': 561, 'retrieval_ms': 2, 'llm_ms': 1535, 'skipped_retrieval': False, 'stt_ms': 1323, 'tts_ms': 4381}
+INFO:     127.0.0.1:60409 - "POST /api/voice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
