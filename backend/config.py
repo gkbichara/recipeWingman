@@ -2,8 +2,7 @@ from dotenv import load_dotenv
 import os
 from openai import OpenAI
 
-load_dotenv()  
-
+load_dotenv()
 
 # RAG settings
 CHUNK_SIZE     = int(os.getenv("CHUNK_SIZE", 500))
@@ -19,4 +18,16 @@ if not OPENAI_API_KEY:
 
 LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o")
 
+# LLM client — supports OpenAI and Gemini via OpenAI-compatible API
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
+if LLM_MODEL.startswith("gemini") and GOOGLE_API_KEY:
+    llm_client = OpenAI(
+        api_key=GOOGLE_API_KEY,
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+    )
+else:
+    llm_client = OpenAI(api_key=OPENAI_API_KEY)
+
+# Default client for embeddings, STT, TTS (always OpenAI)
 client = OpenAI(api_key=OPENAI_API_KEY)
