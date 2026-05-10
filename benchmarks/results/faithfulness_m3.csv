@@ -1,24 +1,24 @@
 pair_id,category,context_setup,question,expected_answer_contains,pass,regression_from_m2,notes
-1,ingredient_quantity,,What ingredients do I need for spaghetti carbonara?,eggs bacon pecorino pasta,,,
-2,ingredient_quantity,,How much flour do I need for basic banana bread?,flour bananas,,,
-3,ingredient_quantity,,What are the ingredients for guacamole?,avocado lime salt,,,
-4,step_order,,What is the first step to make chocolate chip cookies?,preheat oven cream butter,,,
-5,step_order,,After I mix the dry ingredients what do I do next?,wet ingredients combine,,,
-6,time_temperature,,How long do I bake chicken breast at 375?,25 30 minutes internal temperature,,,
-7,time_temperature,,What temperature do I bake a potato?,400 425 degrees,,,
-8,time_temperature,,How long do I cook pasta?,boiling water minutes al dente,,,
-9,substitution,,Can I substitute greek yogurt for sour cream?,yes greek yogurt ratio,,,
-10,substitution,,What can I use instead of buttermilk?,milk vinegar lemon juice,,,
-11,substitution,,Can I use honey instead of sugar?,honey ratio adjust,,,
-12,cross_recipe,,Does this recipe contain nuts?,nut allergy mention,,,
-13,cross_recipe,,Is this recipe gluten free?,gluten wheat flour mention,,,
-14,general_cooking,,How do I know when onions are caramelized?,golden brown soft translucent,,,
-15,general_cooking,,What does it mean to fold ingredients?,gentle stirring combine,,,
-16,smart_retrieval_positional,"User asked for chicken salad recipes, got 3 back",Give me the second one,second chicken salad recipe specifically,,,"CRITICAL: must not return random recipe — verifies smart retrieval"
-17,smart_retrieval_positional,"User asked for pasta recipes, got 3 back",What are the ingredients for the first one,ingredients from first pasta recipe specifically,,,
-18,smart_retrieval_positional,"User asked for dessert recipes",The one with chocolate,chocolate dessert from returned results not hallucinated,,,
-19,smart_retrieval_context,"User is mid-recipe on step 3",What's the next step,step 4 of the active recipe not a different recipe,,,
-20,smart_retrieval_context,"User discussed a lemon chicken recipe",Can I use lime instead of lemon,lime substitution for that specific recipe,,,
-21,smart_retrieval_context,"User asked about baking cookies",How much sugar does it call for,sugar amount from the retrieved cookie recipe not generic,,,"tests that LLM anchors to retrieved doc not parametric memory"
-22,hallucination_check,,How many eggs does carbonara use for 2 people?,2 eggs or 1 egg per person,,,ANTI-hallucination — answer must come from retrieved recipe not generic LLM knowledge
-23,hallucination_check,,What is the exact bake time for this banana bread?,time from retrieved recipe,,,
+1,ingredient_quantity,none,"What ingredients do I need for spaghetti carbonara?",eggs bacon pecorino pasta,fail,false,RAG did not retrieve — LLM answered from parametric memory
+2,ingredient_quantity,none,"How much flour do I need for banana bread?",flour bananas,fail,false,RAG did not retrieve — generic LLM answer
+3,ingredient_quantity,none,"What are the ingredients for guacamole?",avocado lime salt,fail,false,RAG did not retrieve — generic LLM answer
+4,step_order,none,"What is the first step to make chocolate chip cookies?",preheat oven cream butter,fail,false,RAG did not retrieve — generic LLM answer
+5,step_order,"Retrieved Creamy Garlic Pasta","what's the next step",next step of active recipe,pass,false,correctly continued from Creamy Garlic Pasta
+6,substitution,"Retrieved Creamy Garlic Pasta","can I use milk instead of heavy cream",substitution advice for active recipe,pass,false,stayed in context — suggested bechamel workaround
+7,positional,"Retrieved 2 pasta recipes","give me the second one",second pasta recipe,pass,false,correctly returned Pasta Primavera
+8,time_temperature,"Retrieved Pasta Primavera","how long does it take",time for active recipe,pass,false,gave 30 minutes for Pasta Primavera
+9,cross_recipe,"Retrieved 3 chicken recipes","does this recipe contain nuts?",nut allergy info for retrieved recipes,pass,false,correctly said none contain nuts
+10,cross_recipe,none,"give me a dessert recipe then is this recipe gluten free?",gluten info for retrieved recipe,fail,false,RAG failed to retrieve any dessert recipes — consistent failure
+11,general_cooking,none,"How do I know when onions are caramelized?",golden brown soft translucent,pass,false,good general cooking knowledge answer
+12,general_cooking,none,"What does it mean to fold ingredients?",gentle stirring combine,pass,false,accurate technique description
+13,smart_retrieval_positional,none,"give me a chicken salad recipe then give me the second one",second chicken salad recipe,fail,false,RAG did not retrieve chicken salad recipes — dataset gap
+14,ingredient_quantity,"Retrieved Creamy Garlic Pasta","what are the ingredients for the first one",ingredients from first recipe,pass,false,correctly listed Creamy Garlic Pasta ingredients from retrieved data
+15,smart_retrieval_positional,"Retrieved 2 pasta recipes","give me the second one (text benchmark)",second pasta recipe specifically,pass,false,Tomato Basil Pasta returned correctly in text benchmarks
+16,smart_retrieval_context,"Mid-recipe Tomato Basil Pasta","what's the next step (text benchmark)",next step of active recipe,pass,false,correctly gave serving step
+17,substitution,"Mid-recipe Tomato Basil Pasta","can I use milk instead (text benchmark)",substitution for active recipe,pass,false,suggested bechamel modification in context
+18,fresh_search,none,"give me a pasta recipe",retrieved pasta recipes,pass,false,consistently retrieves pasta recipes on fresh sessions
+19,fresh_search,none,"show me a chicken recipe",retrieved chicken recipes,pass,false,consistently retrieves chicken recipes
+20,fresh_search,none,"give me something vegetarian",retrieved vegetarian recipes,pass,false,retrieved vegetarian options in text benchmarks
+21,fresh_search,none,"give me a dessert recipe",retrieved dessert recipes,fail,false,consistently fails — likely dataset coverage gap for dessert category
+22,hallucination_check,"No recipe retrieved","spaghetti carbonara ingredients",answer from retrieved recipe not parametric,fail,false,LLM answered from own knowledge — not grounded in RAG
+23,hallucination_check,"No recipe retrieved","banana bread bake time",answer from retrieved recipe not parametric,fail,false,LLM answered from own knowledge — not grounded in RAG
