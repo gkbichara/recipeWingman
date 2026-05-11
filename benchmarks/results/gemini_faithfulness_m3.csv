@@ -1,0 +1,16 @@
+pair_id,category,question,pass,model,notes
+1,ingredient_quantity,"What ingredients do I need for spaghetti carbonara?",pass,gemini-2.0-flash,retrieved 2 real carbonara recipes with organized ingredient lists
+2,ingredient_quantity,"How much flour do I need for banana bread?",pass,gemini-2.0-flash,found banana bread recipes — GPT-4o failed this
+3,ingredient_quantity,"What are the ingredients for guacamole?",pass,gemini-2.0-flash,found multiple guacamole variations — GPT-4o failed this
+4,general_cooking,"How do I know when onions are caramelized?",pass,gemini-2.0-flash,accurate description grounded in context
+5,general_cooking,"What does it mean to fold ingredients?",pass,gemini-2.0-flash,accurate technique with recipe example
+6,fresh_search,"give me a pasta recipe",pass,gemini-2.0-flash,retrieved 2 real recipes with full instructions
+7,positional_followup,"give me the second one",pass,gemini-2.0-flash,correctly returned Aglio e Olio
+8,step_question,"what's the next step",pass,gemini-2.0-flash,correctly continued in context
+9,substitution,"can I use milk instead",pass,gemini-2.0-flash,detailed substitution advice per recipe
+10,fresh_search,"give me a dessert recipe",pass,gemini-2.0-flash,retrieved 3 real desserts with full recipes
+11,fresh_search,"give me a chicken recipe",pass,gemini-2.0-flash,retrieved Amish Chicken with full recipe
+12,cross_recipe,"does this recipe contain nuts?",pass,gemini-2.0-flash,proactively flagged peanut butter in alternative — better than GPT-4o
+13,fresh_search,"give me a chicken salad recipe",pass,gemini-2.0-flash,retrieved 4 real chicken salad recipes — GPT-4o failed this
+14,fresh_search,"give me something vegetarian",pass,gemini-2.0-flash,retrieved 3 vegetarian recipes with full instructions
+15,positional_followup,"the one with spinach",pass,gemini-2.0-flash,correctly identified lasagna with spinach

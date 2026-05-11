@@ -1,0 +1,39 @@
+run_id,query_id,query_text,query_type,classify_ms,embedding_ms,retrieval_ms,llm_ms,skipped_retrieval,model,notes
+1,1,"give me a pasta recipe",fresh_search,0,1777,139,4985,false,gemini-2.0-flash,
+1,2,"give me the second one",positional_followup,1337,0,0,2324,true,gemini-2.0-flash,smart retrieval fired
+1,3,"what's the next step",step_question,1138,0,0,5978,true,gemini-2.0-flash,smart retrieval fired
+1,4,"can I use milk instead",substitution,1154,1388,12,4367,false,gemini-2.0-flash,
+1,5,"actually I want a dessert",new_search_mid_convo,1253,754,6,5615,false,gemini-2.0-flash,
+1,6,"show me a chicken recipe",fresh_search,1910,0,0,5490,true,gemini-2.0-flash,smart retrieval fired
+1,7,"what are the ingredients",context_followup,1442,0,0,4128,true,gemini-2.0-flash,smart retrieval fired
+1,8,"how long does it take",context_followup,1584,389,11,4316,false,gemini-2.0-flash,
+1,9,"give me something vegetarian",fresh_search,1321,0,0,4069,true,gemini-2.0-flash,smart retrieval fired
+1,10,"the one with spinach",positional_followup,1273,0,0,1288,true,gemini-2.0-flash,smart retrieval fired
+1,11,"what temperature should the oven be",step_question,1397,0,0,3043,true,gemini-2.0-flash,smart retrieval fired
+1,12,"can I substitute butter for oil",substitution,2398,702,13,10884,false,gemini-2.0-flash,llm_ms spike
+1,13,"actually show me a soup instead",new_search_mid_convo,0,672,5,6167,false,gemini-2.0-flash,
+2,1,"give me a pasta recipe",fresh_search,1244,0,0,3686,true,gemini-2.0-flash,
+2,2,"give me the second one",positional_followup,1141,0,0,6441,true,gemini-2.0-flash,smart retrieval fired
+2,3,"what's the next step",step_question,1808,0,0,5732,true,gemini-2.0-flash,smart retrieval fired
+2,4,"can I use milk instead",substitution,1420,510,8,3851,false,gemini-2.0-flash,
+2,5,"actually I want a dessert",new_search_mid_convo,1167,495,4,3307,false,gemini-2.0-flash,
+2,6,"show me a chicken recipe",fresh_search,1525,0,0,2370,true,gemini-2.0-flash,smart retrieval fired
+2,7,"what are the ingredients",context_followup,1519,0,0,2538,true,gemini-2.0-flash,smart retrieval fired
+2,8,"how long does it take",context_followup,2365,408,17,4270,false,gemini-2.0-flash,
+2,9,"give me something vegetarian",fresh_search,1667,0,0,3906,true,gemini-2.0-flash,smart retrieval fired
+2,10,"the one with spinach",positional_followup,1400,0,0,961,true,gemini-2.0-flash,smart retrieval fired
+2,11,"what temperature should the oven be",step_question,1374,0,0,2953,true,gemini-2.0-flash,smart retrieval fired
+2,12,"can I substitute butter for oil",substitution,1436,638,8,8293,false,gemini-2.0-flash,
+2,13,"actually show me a soup instead",new_search_mid_convo,0,636,21,5350,false,gemini-2.0-flash,
+3,1,"give me a pasta recipe",fresh_search,1406,0,0,9789,true,gemini-2.0-flash,high llm_ms
+3,2,"give me the second one",positional_followup,1331,0,0,9098,true,gemini-2.0-flash,smart retrieval fired
+3,3,"what's the next step",step_question,1441,0,0,6372,true,gemini-2.0-flash,smart retrieval fired
+3,4,"can I use milk instead",substitution,1115,394,5,7183,false,gemini-2.0-flash,
+3,5,"actually I want a dessert",new_search_mid_convo,1120,411,4,5914,false,gemini-2.0-flash,
+3,6,"show me a chicken recipe",fresh_search,1288,0,0,4898,true,gemini-2.0-flash,smart retrieval fired
+3,7,"what are the ingredients",context_followup,1350,0,0,4198,true,gemini-2.0-flash,smart retrieval fired
+3,8,"how long does it take",context_followup,1222,461,14,7018,false,gemini-2.0-flash,
+3,9,"give me something vegetarian",fresh_search,1407,0,0,4861,true,gemini-2.0-flash,smart retrieval fired
+3,10,"the one with spinach",positional_followup,1233,0,0,1462,true,gemini-2.0-flash,smart retrieval fired
+3,11,"what temperature should the oven be",step_question,1925,0,0,3399,true,gemini-2.0-flash,smart retrieval fired
+3,12,"can I substitute butter for oil",substitution,2086,356,8,10977,false,gemini-2.0-flash,llm_ms spike

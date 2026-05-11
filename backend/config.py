@@ -16,7 +16,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
     raise RuntimeError("OPENAI_API_KEY is not set. Add it to your .env file.")
 
-LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o")
+LLM_MODEL = os.getenv("LLM_MODEL", "gemini-3-flash")
 
 # LLM client — supports OpenAI and Gemini via OpenAI-compatible API
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
